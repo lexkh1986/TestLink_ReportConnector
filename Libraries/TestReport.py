@@ -3,6 +3,7 @@ import csv
 
 class TestReport:
     def __init__(self):
+        self.willRerun = False
         self.isRerun = False
         self.iContent = []
 

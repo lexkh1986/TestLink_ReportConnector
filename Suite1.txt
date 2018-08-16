@@ -2,7 +2,7 @@
 
 *** Test Cases ***
 TC1
-  [Documentation]  BLah Blah BLah
+  [Documentation]  TC1 sumary
   Log  Step1
   Log  Step2
   Log  VP1

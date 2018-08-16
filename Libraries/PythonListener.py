@@ -1,5 +1,5 @@
 from TestReport import TestReport, TestCase
-from HTMLParser import HTMLParser
+import HTMLParser
 
 class PythonListener:
     ROBOT_LISTENER_API_VERSION = 2
@@ -20,10 +20,8 @@ class PythonListener:
         self.TESTLINK_REPORT.append_tc(self._iTC)
 
     def output_file(self, path):
-        #print self.TESTLINK_REPORT.export()
-        #self.TESTLINK_REPORT.export_csv('report.csv')
-        HTMLParser.printHTML(self.TESTLINK_REPORT)
-        
+        print self.TESTLINK_REPORT.export()
+        self.TESTLINK_REPORT.export_csv('report.csv')
 
     @staticmethod
     def _buildTC(name, details):
