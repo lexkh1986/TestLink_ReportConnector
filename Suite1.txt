@@ -1,0 +1,13 @@
+*** Settings ***
+
+*** Test Cases ***
+TC1
+  [Documentation]  BLah Blah BLah
+  Log  Step1
+  Log  Step2
+  Log  VP1
+  Log  Step3
+  Log  VP2
+
+TC2
+  Log  ${TEST_NAME}

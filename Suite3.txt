@@ -1,0 +1,7 @@
+*** Test Cases ***
+TC6
+  Log  ${TEST_NAME}
+
+TC7
+  Log  ${TEST_NAME}
+  Fail  Sample fail test 7
