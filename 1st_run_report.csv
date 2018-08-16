@@ -1,0 +1,7 @@
+name_short,status,isCritical,id_testlink,report_link,name_long,fail_msg,run_duration,summary
+TC1,PASS,yes,id,s1-s1-t1,TestLib.Suite1.TC1,,0,TC1 sumary
+TC2,PASS,yes,id,s1-s1-t2,TestLib.Suite1.TC2,,0,
+TC4,PASS,yes,id,s1-s2-t1,TestLib.Suite2.TC4,,0,
+TC5,FAIL,yes,id,s1-s2-t2,TestLib.Suite2.TC5,Sample fail test 5,0,
+TC6,PASS,yes,id,s1-s3-t1,TestLib.Suite3.TC6,,0,
+TC7,FAIL,yes,id,s1-s3-t2,TestLib.Suite3.TC7,Sample fail test 7,0,

@@ -1,24 +1,14 @@
-from numpy import *
-import csv
-
-class TestReport:
+class TestReport(object):
     def __init__(self):
-        self.willRerun = False
-        self.isRerun = False
+        self.hasFailTest = False
+        self.isRebot = False
         self.iContent = []
 
     def append_tc(self, testCase):
+        if 'run_status' in testCase.__dict__.keys():
+            if testCase.run_status.lower() in ('fail','p'):
+                self.hasFailTest = True
         self.iContent.append(testCase)
-
-    def export(self):
-        return array([tc._print() for tc in self.iContent])
-
-    def export_csv(self, filepath):
-        keys = self.export()[0].keys()
-        with open(filepath, 'wb') as of:
-            writer = csv.DictWriter(of, keys)
-            writer.writeheader()
-            writer.writerows(self.export())
 
 class TestCase:
     def __init__(self, id_testlink, name_short, name_long, summary, isCritical):

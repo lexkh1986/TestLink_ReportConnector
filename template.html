@@ -1,0 +1,163 @@
+<!--
+Created: Jane Dinh
+Integration Jenkins & Testlink: Export report
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<style>
+/* Color */
+            a.status-pass {
+                color: green;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+            a.status-fail {
+                color: red;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+            a.status-notrun {
+                color: black;
+                font-weight: bold;
+                text-decoration: none;
+            }
+            
+            a:hover {
+                color: #800080;
+            }
+
+            th, td {
+                padding: 10px;
+                text-align: left;
+            }
+
+            tbody tr:nth-child(even) {
+                background-color: #F8F8F8;
+            }
+
+            tbody tr:nth-child(odd) {
+                background-color: #fff;
+            }
+
+            h2{
+                color:#FF5538;
+            }
+            
+            [role=button]{cursor:pointer}
+            
+            td#mouse:hover
+            {
+               color: #800080;
+            }
+            
+            body {
+                font-family:Arial; 
+                font-size: 14px;
+            }
+            
+            td.suite{
+                background-color: #CCCCCC;
+                font-weight: bold;
+                color: #3f3f3f;
+            }
+
+            tr#title{
+                background-color: #FF5538;
+                color: white;
+            }
+
+            table {
+                border: 1px solid #ddd;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                width: 98%;
+                margin: 20px 20px 20px 15px;
+            }
+
+            span {
+                font-style:italic;
+                font-weight: bold
+            }
+
+            .tlreport {
+                text-align: center;
+                margin: 40px 0px 20px 35px;
+            }
+
+            /***** Div *****/
+            .info {
+                margin-top: 0px;
+                margin-left: 30px;
+            }
+
+            /* Create two equal columns that floats next to each other */
+            .column {
+                float: left;
+                width: 33%;
+
+            }
+
+            /* Clear floats after the columns */
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+
+            /***** List Styles *****/
+            li {
+                margin-bottom: 1.0em;
+                margin-left: -20px;
+            }
+
+</style>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>TESTLINK REPORT</title>
+</head>        
+        <body>
+			<table> 
+                <thead>
+					${ac_title_head}
+                                        
+					<tr>
+                        <th colspan="5" style="background: #fff; font-weight: normal;">
+                            <div class="info">               
+                                <div class="row">
+                                    <div class="column">
+                                        ${ac_info_plan}
+                                    </div>
+                                    <div class="column">
+                                        <p><span>Automation Results</span></p>
+                                        <ul>
+                                            ${ac_info_auto}
+                                        </ul>
+                                    </div>
+                                    <div class="column">
+                                        <p><span>Manual Results</span></p>
+                                        <ul>
+                                            ${ac_info_manual}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+        
+                    <tr id="title" style="background: #00A98F">
+                        <th>Testlink ID</th>
+                        <th>Testcase name</th>
+                        <th>Automation name</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+					${ac_list_testcase_auto}
+				</tbody>
+			</table>
+        </tbody>
+			${ac_list_testcase_manual}
+        </body>
+    </html>
