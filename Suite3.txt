@@ -1,3 +1,6 @@
+*** Settings ***
+Metadata        TC6  4400
+
 *** Test Cases ***
 TC6
   Log  ${TEST_NAME}

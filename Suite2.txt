@@ -1,3 +1,7 @@
+*** Settings ***
+Metadata        TC4  4398
+Metadata        TC5  4399
+
 *** Test Cases ***
 TC4
   Log  ${TEST_NAME}

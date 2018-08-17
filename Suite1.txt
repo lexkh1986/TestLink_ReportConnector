@@ -1,4 +1,6 @@
 *** Settings ***
+Metadata        TC1  4395
+Metadata        TC2  4396
 
 *** Test Cases ***
 TC1
