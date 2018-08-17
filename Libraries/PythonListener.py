@@ -1,7 +1,8 @@
+from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport, TestCase
 from ReportPrinter import ReportPrinter
 
-class PythonListener:
+class PythonListener(object):
     ROBOT_LISTENER_API_VERSION = 2
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     _iTC = None
@@ -9,19 +10,19 @@ class PythonListener:
     def __init__(self):
         self.TESTLINK_REPORT = ReportPrinter()
 
-    def start_test(self, name, attrs):
+    def _start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs)
 
-    def end_test(self, name, attrs):
+    def _end_test(self, name, attrs):
         self._iTC.setResult(attrs['status'],
                             attrs['id'],
                             attrs['elapsedtime'],
                             attrs['message'])
         self.TESTLINK_REPORT.append_tc(self._iTC)
 
-    def output_file(self, path):
+    def _output_file(self, path):
         self.TESTLINK_REPORT.parseReport()
-        
+   
     @staticmethod
     def _buildTC(name, details):
         iTestCase = TestCase(id_testlink = 'id',

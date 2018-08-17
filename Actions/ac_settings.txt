@@ -1,0 +1,6 @@
+*** Settings ***
+Library         ../Libraries/PythonListener.py
+
+*** Keywords ***
+global_init
+  Log  Init global settings

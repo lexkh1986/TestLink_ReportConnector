@@ -4,20 +4,11 @@ import csv
 
 class ReportPrinter(TestReport):
     REPORT_HTML_PATH = 'testlink_report.html'
-    REPORT_CSV_PATH = '1st_run_report.csv'
+    REPORT_CSV_PATH = 'run_report.csv'
     REPORT_TEMPLATE_PATH = 'template.html'
     
     def __init__(self):
         super(ReportPrinter, self).__init__()
-
-    def setpath_html_report(self, path):
-        self.REPORT_HTML_PATH = path
-
-    def setpath_csv_report(self, path):
-        self.REPORT_CSV_PATH = path
-
-    def setpath_template_report(self, path):
-        self.REPORT_TEMPLATE_PATH = path
     
     def parseReport(self):
         if not self.isRebot:
