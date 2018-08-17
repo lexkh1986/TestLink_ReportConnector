@@ -10,17 +10,17 @@ class PythonListener(object):
     def __init__(self):
         self.TESTLINK_REPORT = ReportPrinter()
 
-    def _start_test(self, name, attrs):
+    def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs)
 
-    def _end_test(self, name, attrs):
+    def end_test(self, name, attrs):
         self._iTC.setResult(attrs['status'],
                             attrs['id'],
                             attrs['elapsedtime'],
                             attrs['message'])
         self.TESTLINK_REPORT.append_tc(self._iTC)
 
-    def _output_file(self, path):
+    def output_file(self, path):
         self.TESTLINK_REPORT.parseReport()
    
     @staticmethod
