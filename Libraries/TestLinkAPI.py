@@ -4,7 +4,7 @@ from testlink import *
 from numpy import *
 
 class TestLinkAPI(object):
-    STATUS = {1:'PASS', 0:'FAIL'}
+    STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
     
     def __init__(self, TestReport_):
         self.TESTLINK_REPORT = TestReport_
@@ -13,7 +13,7 @@ class TestLinkAPI(object):
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)
         self._project('NAP Special Delete')
         self.TESTPLAN = 'Demo RobotFramework TestPlan'
-        self.TESTBUILD = 'Demo Build 1'
+        self.TESTBUILD = 'Demo Build 2'
 
     def _report(self):
         return self.TESTLINK_REPORT
@@ -56,16 +56,15 @@ class TestLinkAPI(object):
                                                          details = 'simple').values()
         self.TESTLINK_REPORT.iManualContent = [{'testlink_id':elem[0]['full_external_id'],
                                                 'testlink_name':elem[0]['tcase_name'],
-                                                'status':elem[0]['status']} \
+                                                'status':self.STATUS.get(elem[0]['exec_status'])} \
                                                 for elem in iTC_TestLink \
                                                 if elem[0]['external_id'] not in iTC_Auto]
 
     def updateRP_Result(self, switcher):
         if switcher:
-            print '\nSynchronize automation results to TestLink...'
-            print(self.TESTLINK_REPORT._export())
+            print '\nDo synchronize automation results to TestLink...'
 
     def updateTC_Steps(self, TestCase_, switcher):
         if switcher:
             if TestCase_.testlink_id is not None:
-                print '\nSynchronize TestCase steps to TestLink...'
+                print '\nDo synchronize TestCase steps to TestLink...'

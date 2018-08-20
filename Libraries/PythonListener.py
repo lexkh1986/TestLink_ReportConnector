@@ -15,18 +15,18 @@ class PythonListener(object):
         self.TESTLINK_API = TestLinkAPI(self.TESTLINK_REPORT)
 
     def start_test(self, name, attrs):
-        self._iTC = self._buildTC(name, attrs)
-        self.TESTLINK_API.getTC_TestLink_Details(self._iTC)
+        self._iTC = self._buildTC(name, attrs) #Build testcase object
+        self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
 
     def end_test(self, name, attrs):
-        self._buildResult(self._iTC, attrs)
-        self.TESTLINK_REPORT.append_tc(self._iTC)
-        self.TESTLINK_API.updateTC_Steps(self._iTC, self._iSyncSteps)
+        self._buildResult(self._iTC, attrs) #Build result object
+        self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
+        self.TESTLINK_API.updateTC_Steps(self._iTC, self._iSyncSteps) #Log auto steps to TestCase sumarry
 
     def output_file(self, path):
-        self.TESTLINK_API.getRP_TestLink_Manual()
-        self.TESTLINK_API.updateRP_Result(self._iSyncResults)
-        self.TESTLINK_REPORT.parseReport()
+        self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
+        self.TESTLINK_API.updateRP_Result(self._iSyncResults) #Update auto result to TestLink
+        self.TESTLINK_REPORT.parseReport() # Build html report
 
     @staticmethod
     def _buildTC(name, attrs):
