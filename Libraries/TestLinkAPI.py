@@ -58,7 +58,7 @@ class TestLinkAPI(object):
                                                 'testlink_name':elem[0]['tcase_name'],
                                                 'status':self.STATUS.get(elem[0]['exec_status'])} \
                                                 for elem in iTC_TestLink \
-                                                if elem[0]['external_id'] not in iTC_Auto]
+                                                if elem[0]['full_external_id'] not in iTC_Auto]
 
     def updateRP_Result(self, switcher):
         if switcher:
