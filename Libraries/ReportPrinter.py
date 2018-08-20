@@ -48,10 +48,13 @@ class ReportPrinter(TestReport):
         return array(iRpt)
 
     def _export_manual_report(self):
-        iRpt = [self.iManualContent[0].keys()]
-        tmpContent = [elem.values() for elem in self.iManualContent]
-        for i, v in enumerate(tmpContent): iRpt.append(v)
-        return array(iRpt)
+        try:
+            iRpt = [self.iManualContent[0].keys()]
+            tmpContent = [elem.values() for elem in self.iManualContent]
+            for i, v in enumerate(tmpContent): iRpt.append(v)
+            return array(iRpt)
+        except Exception:
+            return array([['testlink_id', 'testlink_name', 'status']])
 
     def _export_manual_csv(self, filepath):
         with open(filepath, 'wb') as of:
