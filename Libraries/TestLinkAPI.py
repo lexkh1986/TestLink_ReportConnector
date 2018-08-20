@@ -43,7 +43,7 @@ class TestLinkAPI(object):
         if iTestLink_id is not None:
             iTestLink_details = self.CONN.getTestCase(testcaseexternalid = '%s-%s' \
                                                       % (self.PROJECT_PREFIX, str(iTestLink_id)))
-            TestCase_.setDetail(testlink_id = iTestLink_id,
+            TestCase_.setDetail(testlink_id = '%s-%s' % (self.PROJECT_PREFIX, str(iTestLink_id)),
                                 testlink_name = iTestLink_details[0]['name'])
         else:
             TestCase_.setDetail(testlink_id = None,
