@@ -1,3 +1,4 @@
+from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport
 from numpy import *
 import csv
@@ -22,9 +23,13 @@ class ReportPrinter(TestReport):
         elif self.isRebot:
             print 'Detected as a rerun process. Merging result...'
             print 'Printing html report...'
+        print self._export_manual_report()
 
     def _export(self):
         return array([elem._print() for elem in self.iContent])
+
+    def _export_manual_report(self):
+        return array(self.iManualContent)
 
     def _export_csv(self, filepath):
         keys = self._export()[0].keys()

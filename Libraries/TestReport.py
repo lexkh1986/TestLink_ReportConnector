@@ -3,6 +3,7 @@ class TestReport(object):
         self.hasFailTest = False
         self.isRebot = False
         self.iContent = []
+        self.iManualContent = []
 
     def append_tc(self, testCase):
         if 'run_status' in testCase.__dict__.keys():
@@ -11,12 +12,15 @@ class TestReport(object):
         self.iContent.append(testCase)
 
 class TestCase:
-    def __init__(self, id_testlink, name_short, name_long, summary, isCritical):
-        self.id_testlink = id_testlink
+    def __init__(self, name_short, name_long, summary, isCritical):
         self.name_short = name_short
         self.name_long = name_long
         self.summary = summary
         self.isCritical = isCritical
+
+    def setDetail(self, testlink_id, testlink_name):
+        self.testlink_id = testlink_id
+        self.testlink_name = testlink_name
 
     def setResult(self, status, report_link, duration, message):
         self.run_status = status
@@ -26,7 +30,8 @@ class TestCase:
 
     def _print(self):
         iDetails = {}
-        iDetails.update({'id_testlink':self.id_testlink})
+        iDetails.update({'testlink_id':self.testlink_id})
+        iDetails.update({'testlink_name':self.testlink_name})
         iDetails.update({'name_short':self.name_short})
         iDetails.update({'name_long':self.name_long})
         iDetails.update({'summary':self.summary})
@@ -34,5 +39,5 @@ class TestCase:
         iDetails.update({'status':self.run_status})
         iDetails.update({'report_link':self.run_rp_id})
         iDetails.update({'run_duration':self.run_duration})
-        iDetails.update({'fail_msg':self.run_msg})
+        iDetails.update({'test_msg':self.run_msg})
         return iDetails

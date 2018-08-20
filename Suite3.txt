@@ -6,5 +6,6 @@ TC6
   Log  ${TEST_NAME}
 
 TC7
+  [Tags]  aa
   Log  ${TEST_NAME}
   Fail  Sample fail test 7
