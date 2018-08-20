@@ -6,7 +6,7 @@ class ReportPrinter(TestReport):
     REPORT_HTML_PATH = 'testlink_report.html'
     REPORT_AUTO_CSV_PATH = 'run_report.csv'
     REPORT_MANUAL_CSV_PATH = 'manual_report.csv'
-    REPORT_TEMPLATE_PATH = 'template.html'
+    REPORT_TEMPLATE_PATH = './Templates/template.html'
     
     def __init__(self):
         super(ReportPrinter, self).__init__()
@@ -22,18 +22,24 @@ class ReportPrinter(TestReport):
             if not self.hasFailTest:
                 print 'Did not detected a rerun request. Printing html report...'
                 self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
-                                  '%s\%s' % (output_path, self.REPORT_TEMPLATE_PATH))
+                                  '%s' % self.REPORT_TEMPLATE_PATH)
             else:
                 print 'Detected a rerun request. Printing csv report...'
                 self._toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist())
-                print 'Auto result in casv: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
         elif self.isRebot:
             print 'Detected as a rerun process. Merging result...'
             print 'Printing html report...'
+            self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
+                              '%s' % self.REPORT_TEMPLATE_PATH)
 
+        #Export list of manual tests
         print 'Printing manual testcases list...'
         self._toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
-        print 'Manual report in casv: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
+
+        #Log notifications
+        print 'Automated: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
+        print 'Manual   : %s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH)
+        print 'Testlink : %s\%s' % (output_path, self.REPORT_HTML_PATH)
 
     def _export(self):
         iRpt = [self.iContent[0]._print().keys()]
