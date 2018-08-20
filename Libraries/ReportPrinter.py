@@ -10,7 +10,13 @@ class ReportPrinter(TestReport):
     
     def __init__(self):
         super(ReportPrinter, self).__init__()
-    
+
+    @staticmethod    
+    def _toCSV(filepath, source):
+        with open(filepath, 'wb') as of:
+            writer = csv.writer(of)
+            writer.writerows(source)
+
     def parseReport(self, output_path):
         if not self.isRebot:
             if not self.hasFailTest:
@@ -19,35 +25,32 @@ class ReportPrinter(TestReport):
                                   '%s\%s' % (output_path, self.REPORT_TEMPLATE_PATH))
             else:
                 print 'Detected a rerun request. Printing csv report...'
-                self._export_csv('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH))
+                self._toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist())
                 print 'Auto result in casv: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
         elif self.isRebot:
             print 'Detected as a rerun process. Merging result...'
             print 'Printing html report...'
 
         print 'Printing manual testcases list...'
-        self._export_manual_csv('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH))
+        self._toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
         print 'Manual report in casv: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
 
     def _export(self):
-        return array([elem._print() for elem in self.iContent])
+        iRpt = [self.iContent[0]._print().keys()]
+        tmpContent = [elem._print().values() for elem in self.iContent]
+        for i, v in enumerate(tmpContent): iRpt.append(v)
+        return array(iRpt)
 
     def _export_manual_report(self):
-        return array(self.iManualContent)
-
-    def _export_csv(self, filepath):
-        keys = self._export()[0].keys()
-        with open(filepath, 'wb') as of:
-            writer = csv.DictWriter(of, keys)
-            writer.writeheader()
-            writer.writerows(self._export())
+        iRpt = [self.iManualContent[0].keys()]
+        tmpContent = [elem.values() for elem in self.iManualContent]
+        for i, v in enumerate(tmpContent): iRpt.append(v)
+        return array(iRpt)
 
     def _export_manual_csv(self, filepath):
-        keys = self._export_manual_report()[0].keys()
         with open(filepath, 'wb') as of:
-            writer = csv.DictWriter(of, keys)
-            writer.writeheader()
-            writer.writerows(self._export_manual_report())
+            writer = csv.writer(of)
+            writer.writerows(self._export_manual_report().tolist())
 
     def _export_html(self, filepath, templatepath):
         print 'Do something'
