@@ -1,0 +1,5 @@
+SERVER_URL = 'http://testlink.nexcel.vn/lib/api/xmlrpc/v1/xmlrpc.php'
+DEVKEY = 'e0c8ddc5cbfb54db815a85b4bab5cf31'
+PROJECT = 'NAP Special Delete'
+TESTPLAN = 'Demo RobotFramework TestPlan'
+TESTBUILD = 'Demo Build 1'
