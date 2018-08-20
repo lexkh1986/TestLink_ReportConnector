@@ -1,4 +1,3 @@
-from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport
 from numpy import *
 import csv
@@ -12,21 +11,23 @@ class ReportPrinter(TestReport):
     def __init__(self):
         super(ReportPrinter, self).__init__()
     
-    def parseReport(self):
+    def parseReport(self, output_path):
         if not self.isRebot:
             if not self.hasFailTest:
                 print 'Did not detected a rerun request. Printing html report...'
-                self._export_html(self.REPORT_HTML_PATH,
-                                  self.REPORT_TEMPLATE_PATH)
+                self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
+                                  '%s\%s' % (output_path, self.REPORT_TEMPLATE_PATH))
             else:
                 print 'Detected a rerun request. Printing csv report...'
-                self._export_csv(self.REPORT_AUTO_CSV_PATH)
+                self._export_csv('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH))
+                print 'Auto result in casv: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
         elif self.isRebot:
             print 'Detected as a rerun process. Merging result...'
             print 'Printing html report...'
 
         print 'Printing manual testcases list...'
-        self._export_manual_csv(self.REPORT_MANUAL_CSV_PATH)
+        self._export_manual_csv('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH))
+        print 'Manual report in casv: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
 
     def _export(self):
         return array([elem._print() for elem in self.iContent])

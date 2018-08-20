@@ -14,6 +14,9 @@ class PythonListener(object):
         self.TESTLINK_REPORT = ReportPrinter()
         self.TESTLINK_API = TestLinkAPI(self.TESTLINK_REPORT)
 
+    def start_suite(self, name, attrs):
+        self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
+
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object
         self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
@@ -26,7 +29,7 @@ class PythonListener(object):
     def output_file(self, path):
         self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
         self.TESTLINK_API.updateRP_Result(self._iSyncResults) #Update auto result to TestLink
-        self.TESTLINK_REPORT.parseReport() # Build html report
+        self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
 
     @staticmethod
     def _buildTC(name, attrs):
