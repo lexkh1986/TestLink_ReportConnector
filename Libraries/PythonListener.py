@@ -2,6 +2,7 @@ from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport, TestCase
 from TestLinkAPI import TestLinkAPI
 from ReportPrinter import ReportPrinter
+import sys
 
 class PythonListener(object):
     ROBOT_LISTENER_API_VERSION = 2
@@ -13,6 +14,8 @@ class PythonListener(object):
     def __init__(self):
         self.TESTLINK_REPORT = ReportPrinter()
         self.TESTLINK_API = TestLinkAPI(self.TESTLINK_REPORT)
+        if set(sys.argv) & set(['-R','--rerunfailed']):
+            self.TESTLINK_REPORT.isRebot = True
 
     def start_suite(self, name, attrs):
         self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')

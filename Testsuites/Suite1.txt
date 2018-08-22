@@ -1,6 +1,7 @@
 *** Settings ***
 Metadata        TC1  4395
 Metadata        TC2  4396
+Metadata        TC3  4397
 
 *** Test Cases ***
 TC1
@@ -12,4 +13,7 @@ TC1
   Log  VP2
 
 TC2
+  Log  ${TEST_NAME}
+
+TC3
   Log  ${TEST_NAME}
