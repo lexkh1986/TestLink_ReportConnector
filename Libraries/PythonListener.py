@@ -9,7 +9,7 @@ class PythonListener(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     _iTC = None
     _iSyncResults = True
-    _iSyncSteps = False
+    _iSyncSteps = True
 
     def __init__(self):
         self.TESTLINK_REPORT = ReportPrinter()
@@ -27,11 +27,11 @@ class PythonListener(object):
     def end_test(self, name, attrs):
         self._buildResult(self._iTC, attrs) #Build result object
         self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
-        self.TESTLINK_API.updateTC_Steps(self._iTC, self._iSyncSteps) #Log auto steps to TestCase sumarry
+        self.TESTLINK_API.updateTC_Step(self._iTC, self._iSyncSteps) #Log auto steps to TestCase sumarry
+        self.TESTLINK_API.updateTC_Result(self._iTC, self._iSyncResults) #Update auto result to TestLink
 
     def output_file(self, path):
         self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
-        self.TESTLINK_API.updateRP_Result(self._iSyncResults) #Update auto result to TestLink
         self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
 
     @staticmethod
@@ -53,4 +53,5 @@ class PythonListener(object):
                        attrs['id'],
                        attrs['elapsedtime'],
                        attrs['message'])
+        iTC_.summary = attrs['doc']
         

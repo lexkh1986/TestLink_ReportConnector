@@ -2,18 +2,16 @@
 Metadata        TC1  4395
 Metadata        TC2  4396
 Metadata        TC3  4397
+Resource        ../Actions/common.txt
 
 *** Test Cases ***
 TC1
-  [Documentation]  TC1 sumary
-  Log  Step1
-  Log  Step2
-  Log  VP1
-  Log  Step3
-  Log  VP2
+  [Documentation]  This test case verify search
+  ac log  Step: Login
+  ac log  Step: Search match C
+  ac log  Verify point: Show tickets
 
 TC2
-  Log  ${TEST_NAME}
 
 TC3
   Log  ${TEST_NAME}

@@ -1,0 +1,5 @@
+*** Keywords ***
+ac log
+  [Arguments]  ${message}
+  Log  ${message}  INFO  False  True  False
+  Set Test Documentation  \n${message}  Yes
