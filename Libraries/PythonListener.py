@@ -19,6 +19,7 @@ class PythonListener(object):
 
     def start_suite(self, name, attrs):
         self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
+        
 
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object

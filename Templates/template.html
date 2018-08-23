@@ -119,25 +119,36 @@ Integration Jenkins & Testlink: Export report
         <body>
 			<table> 
                 <thead>
-					${ac_title_head}
+					<tr id="title">
+                        <th style="background: #00A98F" colspan="5">${ac_status} (PASSED: ${ac_count_pass}, FAILED: ${ac_count_fail}, NOT RUN: ${ac_count_notrun})</th>
+                    </tr>
                                         
 					<tr>
                         <th colspan="5" style="background: #fff; font-weight: normal;">
                             <div class="info">               
                                 <div class="row">
                                     <div class="column">
-                                        ${ac_info_plan}
+                                        <p><span>Run owner:</span> ${ac_runowner}</p>
+                                        <ul>
+                                            <li><span>Project:</span> ${ac_project}</li>
+                                            <li><span>Plan:</span> ${ac_plan}</li>
+                                            <li><span>Build:</span> ${ac_build}</li>
+                                        </ul>
                                     </div>
                                     <div class="column">
                                         <p><span>Automation Results</span></p>
                                         <ul>
-                                            ${ac_info_auto}
+                                            <li><a href="${ac_link_build}robot/report/report.html">Detailed Report</a></li>
+                                            <li>Pass Percentage: ${ac_auto_percent}%</li>
+                                            <li>PASSED: ${ac_auto_pass}, FAILED: ${ac_auto_fail}</li>
                                         </ul>
                                     </div>
                                     <div class="column">
                                         <p><span>Manual Results</span></p>
                                         <ul>
-                                            ${ac_info_manual}
+                                            <li><a href="http://testlink.nexcel.vn/lib/results/resultsTC.php?format=0&tplan_id=${ac_plan}">Detailed Report</a></li>
+                                            <li>Pass Percentage: ${ac_manual_percent}%</li>
+                                            <li>PASSED: ${ac_manual_pass}, FAILED: ${ac_manual_fail}, NOT RUN: ${ac_manual_notrun}</li>
                                         </ul>
                                     </div>
                                 </div>
