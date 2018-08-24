@@ -1,11 +1,11 @@
 *** Settings ***
-Metadata        TC4  4398
-Metadata        TC5  4399
+Metadata          TC4    NAP-Special Del-4398
+Metadata          TC5    NAP-Special Del-4399
 
 *** Test Cases ***
 TC4
-  Log  ${TEST_NAME}
+    Log    ${TEST_NAME}
 
 TC5
-  Log  ${TEST_NAME}
-  Fail  Sample fail test 5
+    Log    ${TEST_NAME}
+    Fail    Sample fail test 5

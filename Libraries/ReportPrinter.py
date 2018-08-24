@@ -27,17 +27,20 @@ class ReportPrinter(TestReport):
             else:
                 print 'Detected a rerun request. Printing csv report...'
                 self._toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist())
+                #Export list of manual tests
+                print 'Printing manual testcases list...'
+                self._toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
+
         elif self.isRebot:
             print 'Detected as a rerun process. Merging result...'
-            array1 = csv
-            array2 = self._export()
+            array_auto_1 = genfromtxt('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), delimiter=',',dtype=str)
+            array_auto_2 = self._export()
+            
+            for item in array_auto_2: array_auto_1[where((array_auto_1[:,0]==item[0]) & (array_auto_1[:,4]==item[4])), 1] = item[1]
+            array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter=',',dtype=str)
             print 'Printing html report...'
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
-                              '%s' % self.REPORT_TEMPLATE_PATH, self._export(), self._export_manual_report())
-
-        #Export list of manual tests
-        print 'Printing manual testcases list...'
-        self._toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
+                              '%s' % self.REPORT_TEMPLATE_PATH, array_auto_1, array_manual)
 
         #Log notifications
         print 'Automated: %s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH)
@@ -46,8 +49,12 @@ class ReportPrinter(TestReport):
 
     def _export(self):
         iRpt = [self.iContent[0]._print().keys()]
-        tmpContent = [elem._print().values() for elem in self.iContent]
-        for i, v in enumerate(tmpContent): iRpt.append(v)
+        del iRpt[0][7]
+        for elem in self.iContent:
+            v = elem._print().values()
+            del v[7]
+            iRpt.append(v)
+        
         return array(iRpt)
 
     def _export_manual_report(self):
@@ -72,11 +79,11 @@ class ReportPrinter(TestReport):
             nyreport: report automation\n
             nymanual: report manual test\n
         '''
-            
+           
         project = self.PROJECT_NAME
-        plan = self.TESTPLAN
+        plan = self.TESTPLAN_NAME
         runowner = 'Jane Dinh'
-        build = self.TESTBUILD
+        build = self.TESTBUILD_NAME
         
         # get build url from jenkins
         stringbuild = self.read_txt_to_string('./Build.txt').replace('%20',' ')
@@ -86,22 +93,29 @@ class ReportPrinter(TestReport):
         num_rows = size(nyreport,0)
         numpass = count_nonzero(nyreport[:,1]=='PASS')
         numfail = count_nonzero(nyreport[:,1]=='FAIL')
-        numpassmanual = count_nonzero(nymanual[:,0]=='PASS')
-        numfailmanual = count_nonzero(nymanual[:,0]=='FAIL')
-        numnotrunmanual = count_nonzero(nymanual[:,0]=='NOT RUN')
-
+        numskip = count_nonzero(nyreport[:,1]=='SKIP')
+        if nymanual.shape[0] > 1:
+            numpassmanual = count_nonzero(nymanual[:,0]=='PASS')
+            numfailmanual = count_nonzero(nymanual[:,0]=='FAIL')
+            numnotrunmanual = count_nonzero(nymanual[:,0]=='NOT RUN')
+        else:
+            numpassmanual = 0
+            numfailmanual = 0
+            numnotrunmanual = 0
+            print 'Dont have manual testcase'
+            
         per = '0' if numpassmanual == 0 else str(round(float(numpassmanual) / (numpassmanual + numfailmanual + numnotrunmanual) * 100))
         for r in (('${ac_count_pass}', str(numpass + numpassmanual)),('${ac_count_fail}', str(numfail + numfailmanual)), ('${ac_count_notrun}', str(numnotrunmanual)), ('${ac_runowner}', runowner), ('${ac_project}', project),
-                  ('${ac_plan}', plan), ('${ac_build}', build), ('${ac_link_build}', stringbuild), ('${ac_auto_percent}', str(round(float(numpass) / (numpass + numfail) * 100))), ('${ac_auto_pass}', str(numpass)), ('${ac_auto_fail}', str(numfail)),
-                  ('${ac_manual_percent}', per), ('${ac_manual_pass}', str(numpassmanual)), ('${ac_manual_fail}', str(numfailmanual)), ('${ac_manual_notrun}', str(numnotrunmanual)), ('${ac_status}', 'JOB SUCCESS') if numfail == 0 and numfailmanual == 0 else reporthtml.replace('${ac_status}', 'JOB FAILURE')):
+                  ('${ac_plan}', plan), ('${ac_build}', build), ('${ac_link_build}', stringbuild), ('${ac_auto_percent}', str(round(float(numpass) / (numpass + numfail) * 100))), ('${ac_auto_pass}', str(numpass)), ('${ac_auto_fail}', str(numfail)), ('${ac_auto_skip}', str(numskip)),
+                  ('${ac_manual_percent}', per), ('${ac_manual_pass}', str(numpassmanual)), ('${ac_manual_fail}', str(numfailmanual)), ('${ac_manual_notrun}', str(numnotrunmanual)), ('${ac_status}', 'JOB SUCCESS') if numfail == 0 and numfailmanual == 0 else ('${ac_status}', 'JOB FAILURE')):
             reporthtml = reporthtml.replace(*r)
-
+        
         html_string=''''''
         i = 0
         string = ''    
         for item in nyreport:
             if item[0] == 'name_short': continue
-            suite = item[9].replace('.' + item[0], '')
+            suite = item[8].replace('.' + item[0], '')
             if suite != string:
                 suite_string = '''<tr>
                                     <td class="suite" colspan='5'>'''+suite.replace(".", " >> ")+'''</td>
@@ -111,10 +125,10 @@ class ReportPrinter(TestReport):
                 
             table_string = ""
 
-            s = str(round((float(item[8])/(1000.00*60))%60, 2)) + 'm'
+            s = str(round((float(item[7])/(1000.00*60))%60, 2)) + ' m'
             
-            testlinkID = 'None' if item[4]==None else item[4]
-            testname = 'None' if item[3]==None else item[3]
+            testlinkID = 'None' if (item[4]==None or item[4]=='') else item[4]
+            testname = 'None' if (item[3]==None or item[3]=='') else item[3]
             table_string = '''
                 <tr>
                     <td>'''+ testlinkID +'''</td>
@@ -136,8 +150,9 @@ class ReportPrinter(TestReport):
         reporthtml = reporthtml.replace('${ac_list_testcase_auto}', html_string)
         html_string = ''''''
         flag = 0
+        
         try:
-            if nymanual.shape[1] > 1:
+            if nymanual.shape[0] > 1:
                 for tc in nymanual:
                     if tc[0] == 'status':
                         continue

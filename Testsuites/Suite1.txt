@@ -1,8 +1,8 @@
 *** Settings ***
-Metadata        TC1  4395
-Metadata        TC2  4396
-Metadata        TC3  4397
-Resource        ../Actions/common.txt
+Metadata          TC1    NAP-Special Del-4395
+Metadata          TC2    NAP-Special Del-4396
+Metadata          TC3    NAP-Special Del-4397
+Resource          ../Actions/common.txt
 
 *** Test Cases ***
 TC1
@@ -14,4 +14,4 @@ TC1
 TC2
 
 TC3
-  Log  ${TEST_NAME}
+    Log    ${TEST_NAME}

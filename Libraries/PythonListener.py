@@ -20,7 +20,6 @@ class PythonListener(object):
     def start_suite(self, name, attrs):
         self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
         
-
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object
         self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
@@ -32,7 +31,8 @@ class PythonListener(object):
         self.TESTLINK_API.updateTC_Result(self._iTC, self._iSyncResults) #Update auto result to TestLink
 
     def output_file(self, path):
-        self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
+        if self.TESTLINK_REPORT.isRebot == False:
+            self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
         self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
 
     @staticmethod

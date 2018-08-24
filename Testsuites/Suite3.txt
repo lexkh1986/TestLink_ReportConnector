@@ -1,20 +1,19 @@
 *** Settings ***
-Metadata        TC6  4400
-Metadata        TC7  4401
-Metadata        TC8  4402
-Metadata        TC9  4403
+Metadata          TC6    NAP-Special Del-4400
+Metadata          TC7    NAP-Special Del-4401
+Metadata          TC8    NAP-Special Del-4402
 
 *** Test Cases ***
 TC6
-  Log  ${TEST_NAME}
+    Log    ${TEST_NAME}
 
 TC7
-  [Tags]  aa
-  Log  ${TEST_NAME}
-  Fail  Sample fail test 7
+    [Tags]    aa
+    Log    ${TEST_NAME}
+    Fail    Sample fail test 7
 
 TC8
-  Log  ${TEST_NAME}
+    Log    ${TEST_NAME}
 
 TC9
-  Log  ${TEST_NAME}
+    Log    ${TEST_NAME}

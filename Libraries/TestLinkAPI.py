@@ -57,10 +57,8 @@ class TestLinkAPI(object):
     def getTC_TestLink_Details(self, TestCase_):
         iTestLink_id = BuiltIn().get_variable_value('${SUITE METADATA}').get(TestCase_.name_short)
         if iTestLink_id is not None:
-            iTestLink_details = self.CONN.getTestCase(testcaseexternalid = '%s-%s' \
-                                                      % (self._report().PROJECT_PREFIX, str(iTestLink_id)))
-            TestCase_.setDetail(testlink_id = '%s-%s' % (self._report().PROJECT_PREFIX, str(iTestLink_id)),
-                                testlink_name = iTestLink_details[0]['name'])
+            iTestLink_details = self.CONN.getTestCase(testcaseexternalid = iTestLink_id)
+            TestCase_.setDetail(testlink_id = iTestLink_id, testlink_name = iTestLink_details[0]['name'])
         else:
             TestCase_.setDetail(testlink_id = None,
                                 testlink_name = None)
