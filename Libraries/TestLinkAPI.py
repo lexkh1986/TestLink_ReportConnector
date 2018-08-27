@@ -6,7 +6,7 @@ import sys, os
 
 class TestLinkAPI(object):
     STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
-    RESULT = {'PASS':'p', 'FAIL':'f'}
+    ISAUTOMATED = {False:1, True:2}
     CONFIG_PATH = './Config/TestLink_connection.py'
     
     def __init__(self, TestReport_):
@@ -79,7 +79,7 @@ class TestLinkAPI(object):
         if switcher:
             if TestCase_.testlink_id is not None:
                 self.CONN.reportTCResult(testcaseexternalid = TestCase_.testlink_id,
-                                         status = self.RESULT.get(TestCase_.run_status),
+                                         status = _dict_getkey(self.STATUS, TestCase_.run_status),
                                          testplanid = self._report().TESTPLAN_ID,
                                          buildname = self._report().TESTBUILD_NAME,
                                          notes = TestCase_.run_msg)
@@ -89,15 +89,18 @@ class TestLinkAPI(object):
         if switcher:
             if TestCase_.testlink_id is not None:
                 self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
-                                         summary = self._parse_summary(TestCase_.summary))
+                                         summary = _parse_html(TestCase_.summary),
+                                         executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated))
 
-    @staticmethod
-    def _parse_summary(string):
-        val = string.split('''\n''')
-        for i, v in enumerate(val):
-            val[i] = '%s<br/>' % v
-            val[i] = val[i].replace('Step:','<strong>&emsp;Step:</strong>')
-            val[i] = val[i].replace('Checkpoint:','<strong>&emsp;Checkpoint:</strong>')
-            val[i] = val[i].replace('Verify point:','<strong>&emsp;Verify point:</strong>')
-        completedStr = ''.join(val)
-        return completedStr
+def _parse_html(string):
+    val = string.split('''\n''')
+    for i, v in enumerate(val):
+        val[i] = '%s<br/>' % v
+        val[i] = val[i].replace('Step:','<strong>&emsp;Step:</strong>')
+        val[i] = val[i].replace('Checkpoint:','<strong>&emsp;Checkpoint:</strong>')
+        val[i] = val[i].replace('Verify point:','<strong>&emsp;Verify point:</strong>')
+    completedStr = ''.join(val)
+    return completedStr
+
+def _dict_getkey(dict_, value):
+    return next((key for key, val in dict_.items() if val == value), None)

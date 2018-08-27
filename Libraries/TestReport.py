@@ -12,10 +12,11 @@ class TestReport(object):
         self.iContent.append(testCase)
 
 class TestCase:
-    def __init__(self, name_short, name_long, summary, isCritical):
+    def __init__(self, name_short, name_long, summary, isAutomated, isCritical):
         self.name_short = name_short
         self.name_long = name_long
         self.summary = summary
+        self.isAutomated = isAutomated
         self.isCritical = isCritical
 
     def setDetail(self, testlink_id, testlink_name):

@@ -40,7 +40,8 @@ class PythonListener(object):
         iTestCase = TestCase(name_short = name,
                              name_long = attrs['longname'],
                              summary = attrs['doc'],
-                             isCritical = attrs['critical'])
+                             isCritical = attrs['critical'],
+                             isAutomated = True)
         return iTestCase
 
     @staticmethod
