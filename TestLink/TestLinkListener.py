@@ -4,7 +4,7 @@ from TestLinkAPI import TestLinkAPI
 from ReportPrinter import ReportPrinter
 import sys
 
-class PythonListener(object):
+class TestLinkListener(object):
     ROBOT_LISTENER_API_VERSION = 2
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     _iTC = None

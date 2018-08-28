@@ -7,7 +7,7 @@ class ReportPrinter(TestReport):
     REPORT_HTML_PATH = 'testlink_report.html'
     REPORT_AUTO_CSV_PATH = 'run_report.csv'
     REPORT_MANUAL_CSV_PATH = 'manual_report.csv'
-    REPORT_TEMPLATE_PATH = './Templates/template.html'
+    REPORT_TEMPLATE_PATH = '/Templates/template.html'
     
     def __init__(self):
         super(ReportPrinter, self).__init__()

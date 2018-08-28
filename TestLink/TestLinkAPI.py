@@ -2,25 +2,23 @@ from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport, TestCase
 from testlink import *
 from numpy import *
-import sys, os
 
 class TestLinkAPI(object):
     STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
     ISAUTOMATED = {False:1, True:2}
-    CONFIG_PATH = './Config/TestLink_connection.py'
+    CONFIG_PATH = 'TestLink\settings.txt'
     
     def __init__(self, TestReport_):
         #TestLink report
         self.TESTLINK_REPORT = TestReport_
 
         #TestLink connection attributes
-        sys.path.append(os.path.dirname(os.path.expanduser(self.CONFIG_PATH)))
-        import TestLink_connection as tl
-        self.SERVER_URL = tl.SERVER_URL
-        self.DEVKEY = tl.DEVKEY
-        self._report().PROJECT_NAME = tl.PROJECT
-        self._report().TESTPLAN_NAME = tl.TESTPLAN
-        self._report().TESTBUILD_NAME = tl.TESTBUILD
+        _getVarFromFile(self.CONFIG_PATH)
+        self.SERVER_URL = data.SERVER_URL
+        self.DEVKEY = data.DEVKEY
+        self._report().PROJECT_NAME = data.PROJECT
+        self._report().TESTPLAN_NAME = data.TESTPLAN
+        self._report().TESTBUILD_NAME = data.TESTBUILD
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)
@@ -99,8 +97,17 @@ def _parse_html(string):
         val[i] = val[i].replace('Step:','<strong>&emsp;Step:</strong>')
         val[i] = val[i].replace('Checkpoint:','<strong>&emsp;Checkpoint:</strong>')
         val[i] = val[i].replace('Verify point:','<strong>&emsp;Verify point:</strong>')
+        val[i] = val[i].replace('*TC Steps:*','<strong>&emsp;*TC Steps:*</strong>')
+        val[i] = val[i].replace('*VP:*','<strong>&emsp;*VP:*</strong>')
     completedStr = ''.join(val)
     return completedStr
 
 def _dict_getkey(dict_, value):
     return next((key for key, val in dict_.items() if val == value), None)
+
+def _getVarFromFile(filename):
+    import imp
+    with open(filename) as f:
+        global data
+        data = imp.new_module('data')
+        exec(f.read(), data.__dict__)
