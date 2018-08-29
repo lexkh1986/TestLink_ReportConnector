@@ -19,6 +19,7 @@ class TestLinkAPI(object):
         self._report().PROJECT_NAME = data.PROJECT
         self._report().TESTPLAN_NAME = data.TESTPLAN
         self._report().TESTBUILD_NAME = data.TESTBUILD
+        self._report().OWNER_NAME = data.RUNOWNER
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)

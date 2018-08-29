@@ -6,20 +6,26 @@ Integration Jenkins & Testlink: Export report
 <html>
 <style>
 /* Color */
-            a.status-pass {
+            a.status-pass, p.status-pass {
                 color: green;
                 font-weight: bold;
                 text-decoration: none;
             }
 
-            a.status-fail {
+            a.status-fail, p.status-fail {
                 color: red;
                 font-weight: bold;
                 text-decoration: none;
             }
-
-            a.status-notrun {
+			
+            a.status-notrun, p.status-notrun {
                 color: black;
+                font-weight: bold;
+                text-decoration: none;
+            }
+
+            a.status-skip, p.status-skip {
+                color: gray;
                 font-weight: bold;
                 text-decoration: none;
             }
