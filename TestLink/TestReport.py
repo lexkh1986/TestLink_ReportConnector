@@ -18,6 +18,15 @@ class TestCase:
         self.summary = summary
         self.isAutomated = isAutomated
         self.isCritical = isCritical
+        self.steps = []
+
+    def setSteps(self, step_number, actions, expected_results):
+        for i, val in enumerate(self.steps):
+            if val.get('step_number') == step_number: del self.steps[i]
+        self.steps.append({'step_number':step_number,
+                           'actions':actions,
+                           'expected_results':expected_results,
+                           'execution_type':2})
 
     def setDetail(self, testlink_id, testlink_name):
         self.testlink_id = testlink_id
