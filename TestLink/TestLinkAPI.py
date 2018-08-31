@@ -7,22 +7,26 @@ import os
 class TestLinkAPI(object):
     STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
     ISAUTOMATED = {False:1, True:2}
-    CONFIG_PATH =  os.path.dirname(__file__) + '/settings.txt'
+    EXEC_PATH =  os.path.dirname(__file__) + '/TL_Exec_Info.txt'
+    CONFIG_PATH =  os.path.dirname(__file__) + '/TL_Config.txt'
     
     def __init__(self, TestReport_):
         #TestLink report
         self.TESTLINK_REPORT = TestReport_
 
         #TestLink connection attributes
-        _getVarFromFile(self.CONFIG_PATH)
+        _getVarFromFile(self.EXEC_PATH)
         self.SERVER_URL = 'http://testlink.nexcel.vn/lib/api/xmlrpc/v1/xmlrpc.php'
         self.DEVKEY = data.DEVKEY
         self._report().PROJECT_NAME = data.PROJECT
         self._report().TESTPLAN_NAME = data.TESTPLAN
         self._report().TESTBUILD_NAME = data.TESTBUILD
         self._report().OWNER_NAME = data.RUNOWNER
-        self._report().IS_JENKIN_RUN = data.IS_JENKIN_RUN
-        print self._report().IS_JENKIN_RUN
+
+        _getVarFromFile(self.CONFIG_PATH)
+        self._report().IS_JENKIN_RUN = data.isJenkinRun
+        self._report().IS_LOG_STEPS = data.isLogSteps
+        print self._report().IS_LOG_STEPS, self._report().IS_JENKIN_RUN
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)
@@ -91,15 +95,22 @@ class TestLinkAPI(object):
         #Do synchronize automation steps to TestLink...
         if switcher:
             if TestCase_.testlink_id is not None:
+                #print self._report().IS_LOG_STEPS
                 if not TestCase_.steps:
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
                                          summary = _parse_html(TestCase_.summary),
-                                         executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated))
-                else:
+                                         executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
+                                         steps=[])
+                elif self._report().IS_LOG_STEPS is False:
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
                                          summary = _parse_html(TestCase_.summary),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                          steps=TestCase_.steps)
+                else:
+                    self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
+                                         summary = _parse_html(TestCase_.summary + '\n' + '\n'.join('Step: %s\n\tVerify point: %s' % (d['actions'], d['expected_results']) for d in TestCase_.steps)),
+                                         executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
+                                         steps=[])
 
 def _parse_html(string):
     val = string.split('''\n''')

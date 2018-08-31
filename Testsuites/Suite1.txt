@@ -8,14 +8,14 @@ Library           ../TestLink/Methods.py
 *** Test Cases ***
 TC1
     [Documentation]    This test case verify search
-    Log Step    Step: Login    Done
-    Log Step    Step: Search match J    Done
-    Log Step    Verify point: Show tickets    Done
+    Log Step    Login    Done
+    Log Step    Search match J    Done
+    Log Step    Show tickets    Done
 
 TC2
     [Documentation]    Veryfy ...
-    Log Step    Step: Login    Done
-    Log Step    Step: Search match temp    Done
+    Log Step    Login    Done
+    Log Step    Search match temp    Done
     ac log    Test J
 
 TC3

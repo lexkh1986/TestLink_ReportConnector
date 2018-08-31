@@ -9,12 +9,11 @@ del /f /q /s "%~dp0\TempData\*.*"
 if exist "%~dp0\geckodriver.log" del /f /q /s "%~dp0\geckodriver.log"
 
 :: INFO OF THIS BUILD
-echo DEVKEY = '0761f1d979c0abf9b1483ff9801c3a91' >"%~dp0\TestLink\settings.txt"
-echo PROJECT = 'NAP Special Delete' >>"%~dp0\TestLink\settings.txt"
-echo TESTPLAN = 'Demo RobotFramework TestPlan' >>"%~dp0\TestLink\settings.txt"
-echo TESTBUILD = 'Demo Build 1' >>"%~dp0\TestLink\settings.txt"
-echo RUNOWNER = 'Jane Dinh' >>"%~dp0\TestLink\settings.txt"
-echo IS_JENKIN_RUN = True >>"%~dp0\TestLink\settings.txt"
+echo DEVKEY = '0761f1d979c0abf9b1483ff9801c3a91' >"%~dp0\TestLink\TL_Exec_Info.txt"
+echo PROJECT = 'NAP Special Delete' >>"%~dp0\TestLink\TL_Exec_Info.txt"
+echo TESTPLAN = 'Demo RobotFramework TestPlan' >>"%~dp0\TestLink\TL_Exec_Info.txt"
+echo TESTBUILD = 'Demo Build 1' >>"%~dp0\TestLink\TL_Exec_Info.txt"
+echo RUNOWNER = 'Jane Dinh' >>"%~dp0\TestLink\TL_Exec_Info.txt"
 
 :: FIST RUN TEST
 echo:

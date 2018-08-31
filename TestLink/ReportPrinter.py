@@ -74,7 +74,7 @@ class ReportPrinter(TestReport):
             nyreport: report automation\n
             nymanual: report manual test\n
         '''
-           
+        
         project = self.PROJECT_NAME
         plan = self.TESTPLAN_NAME
         build = self.TESTBUILD_NAME
@@ -85,7 +85,7 @@ class ReportPrinter(TestReport):
         if os.path.isfile('./Build.txt'):
             stringbuild = _read_txt_to_string('./Build.txt').replace('%20',' ') + 'robot/report/log.html#'
 
-        if self.IS_JENKIN_RUN == 'False':
+        if self.IS_JENKIN_RUN is False:
             stringbuild = output_path + '/log.html#'
         
         # get template html
