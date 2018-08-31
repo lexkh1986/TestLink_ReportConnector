@@ -21,7 +21,7 @@ class TestLinkAPI(object):
         self._report().TESTPLAN_NAME = data.TESTPLAN
         self._report().TESTBUILD_NAME = data.TESTBUILD
         self._report().OWNER_NAME = data.RUNOWNER
-        self._report().isJenkins = data.isJenkins
+        self._report().IS_JENKIN_RUN = data.IS_JENKIN_RUN
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)

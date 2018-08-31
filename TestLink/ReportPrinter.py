@@ -6,7 +6,7 @@ class ReportPrinter(TestReport):
     REPORT_HTML_PATH = 'testlink_report.html'
     REPORT_AUTO_CSV_PATH = 'run_report.csv'
     REPORT_MANUAL_CSV_PATH = 'manual_report.csv'
-    REPORT_TEMPLATE_PATH = '/Templates/template.html'
+    REPORT_TEMPLATE_PATH = '%s/%s' % (os.path.dirname(__file__), 'Templates/template.html')
     
     def __init__(self):
         super(ReportPrinter, self).__init__()
@@ -25,7 +25,7 @@ class ReportPrinter(TestReport):
             #Print html report
             print 'Printing html report...'
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
-                              '%s%s' % (os.path.dirname(__file__), self.REPORT_TEMPLATE_PATH),
+                              self.REPORT_TEMPLATE_PATH,
                               self._export(),
                               self._export_manual_report(),
                               output_path)
@@ -41,7 +41,7 @@ class ReportPrinter(TestReport):
             
             print 'Re-printing html report...'
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
-                              '%s%s' % (os.path.dirname(__file__), self.REPORT_TEMPLATE_PATH),
+                              self.REPORT_TEMPLATE_PATH,
                               array_auto_1,
                               array_manual,
                               output_path)
@@ -93,7 +93,7 @@ class ReportPrinter(TestReport):
         if os.path.isfile('./Build.txt'):
             stringbuild = _read_txt_to_string('./Build.txt').replace('%20',' ') + 'robot/report/log.html#'
 
-        if self.isJenkins == 'False':
+        if self.IS_JENKIN_RUN == 'False':
             stringbuild = output_path + '/log.html#'
         
         # get template html
