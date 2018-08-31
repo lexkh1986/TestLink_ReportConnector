@@ -54,15 +54,7 @@ class ReportPrinter(TestReport):
 
     def _export(self):
         iRpt = [self.iContent[0]._print().keys()]
-        # Remove summary and test_msg before save csv
-        del iRpt[0][7]
-        del iRpt[0][2]
-        for elem in self.iContent:
-            v = elem._print().values()
-            del v[7]
-            del v[2]
-            iRpt.append(v)
-        
+        for elem in self.iContent: iRpt.append(elem._print().values())
         return array(iRpt)
 
     def _export_manual_report(self):
@@ -169,41 +161,22 @@ class ReportPrinter(TestReport):
             flag = 0
         except Exception, err:
             traceback.print_exc()
-        
+            
+        html_string=''''''
         try:
             if nymanual.shape[0] > 1:
+                reporthtml = reporthtml.replace('${ac_have_manual_list}', '')
                 for tc in nymanual:
-                    if tc[0] == 'status':
-                        continue
-                    if flag == 0:
-                        html_string = html_string + '''<table> 
-                        <thead>                        
-                            <tr id="title"><th style="background: white; color:black" colspan="5">List manual testcases: </th></tr>
-                            <tr id="title" style="background: #00A98F">
-                                <th style="width: 19%;">Testlink ID</th>
-                                <th style="width: 73%;">Testcase name</th>
-                                <th style="width: 8%;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>'''
-                        flag = 1
-                    note_string = '''<td>''' + tc[2] + '''</td>'''
+                    if tc[0] == 'status': continue
+                    
+                    note_string = '''<tr><td>''' + tc[2] + '''</td>'''
                     note_string = note_string + '''<td>''' + tc[1] + '''</td>'''
-                    if tc[0] == 'PASS':
-                        note_string = note_string + '''<td><p class="status-pass" style="margin: 0;">PASS</p></td>
-                                </tr>
-                        <tr>'''
-                    elif tc[0] == 'FAIL':
-                        note_string = note_string + '''<td><p class="status-fail" style="margin: 0;">FAIL</p></td>
-                                </tr>
-                        <tr>'''
-                    else:
-                        note_string = note_string + '''<td><p class="status-notrun" style="margin: 0;">NOT RUN</p></td>
-                                </tr>
-                        <tr>'''
+                    if tc[0] == 'PASS': note_string = note_string + '''<td><p class="status-pass">PASS</p></td></tr>'''
+                    elif tc[0] == 'FAIL': note_string = note_string + '''<td><p class="status-fail">FAIL</p></td></tr>'''
+                    else: note_string = note_string + '''<td><p class="status-notrun">NOT RUN</p></td></tr>'''
                     html_string = html_string + note_string
         except IndexError:
+            reporthtml = reporthtml.replace('${ac_have_manual_list}', 'None')
             print 'Dont have manual testcase'
         reporthtml = reporthtml.replace('${ac_list_testcase_manual}', html_string)
         f = open(filepath,'w')

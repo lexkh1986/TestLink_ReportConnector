@@ -3,15 +3,20 @@ Metadata          TC1    NAP-Special Del-4395
 Metadata          TC2    NAP-Special Del-4396
 Metadata          TC3    NAP-Special Del-4397
 Resource          ../Actions/common.txt
+Library           ../TestLink/Methods.py
 
 *** Test Cases ***
 TC1
-  [Documentation]  This test case verify search
-  ac log  Step: Login
-  ac log  Step: Search match C
-  ac log  Verify point: Show tickets
+    [Documentation]    This test case verify search
+    Log Step    Step: Login    Done
+    Log Step    Step: Search match J    Done
+    Log Step    Verify point: Show tickets    Done
 
 TC2
+    [Documentation]    Veryfy ...
+    Log Step    Step: Login    Done
+    Log Step    Step: Search match temp    Done
+    ac log    Test J
 
 TC3
     Log    ${TEST_NAME}

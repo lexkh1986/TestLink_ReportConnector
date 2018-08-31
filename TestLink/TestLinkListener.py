@@ -23,6 +23,7 @@ class TestLinkListener(object):
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object
         self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
+        BuiltIn().set_test_variable('${TESTLINK_iTC}', self._iTC)
 
     def end_test(self, name, attrs):
         self._buildResult(self._iTC, attrs) #Build result object
@@ -57,3 +58,4 @@ class TestLinkListener(object):
                        attrs['message'])
         iTC_.summary = attrs['doc']
         
+

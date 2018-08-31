@@ -14,7 +14,7 @@ echo PROJECT = 'NAP Special Delete' >>"%~dp0\TestLink\settings.txt"
 echo TESTPLAN = 'Demo RobotFramework TestPlan' >>"%~dp0\TestLink\settings.txt"
 echo TESTBUILD = 'Demo Build 1' >>"%~dp0\TestLink\settings.txt"
 echo RUNOWNER = 'Jane Dinh' >>"%~dp0\TestLink\settings.txt"
-echo isJenkins = 'True' >>"%~dp0\TestLink\settings.txt"
+echo IS_JENKIN_RUN = True >>"%~dp0\TestLink\settings.txt"
 
 :: FIST RUN TEST
 echo:

@@ -22,6 +22,7 @@ class TestLinkAPI(object):
         self._report().TESTBUILD_NAME = data.TESTBUILD
         self._report().OWNER_NAME = data.RUNOWNER
         self._report().IS_JENKIN_RUN = data.IS_JENKIN_RUN
+        print self._report().IS_JENKIN_RUN
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)
@@ -83,15 +84,22 @@ class TestLinkAPI(object):
                                          status = _dict_getkey(self.STATUS, TestCase_.run_status),
                                          testplanid = self._report().TESTPLAN_ID,
                                          buildname = self._report().TESTBUILD_NAME,
-                                         notes = TestCase_.run_msg)
+                                         notes = TestCase_.run_msg,
+                                         execduration = (TestCase_.run_duration/(1000.0*60))%60)
 
     def updateTC_Step(self, TestCase_, switcher):
         #Do synchronize automation steps to TestLink...
         if switcher:
             if TestCase_.testlink_id is not None:
-                self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
+                if not TestCase_.steps:
+                    self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
                                          summary = _parse_html(TestCase_.summary),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated))
+                else:
+                    self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
+                                         summary = _parse_html(TestCase_.summary),
+                                         executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
+                                         steps=TestCase_.steps)
 
 def _parse_html(string):
     val = string.split('''\n''')

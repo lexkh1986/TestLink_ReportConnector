@@ -3,4 +3,4 @@ PROJECT = 'NAP Special Delete'
 TESTPLAN = 'Demo RobotFramework TestPlan' 
 TESTBUILD = 'Demo Build 1' 
 RUNOWNER = 'Jane Dinh' 
-IS_JENKIN_RUN = 'True' 
+IS_JENKIN_RUN = True 

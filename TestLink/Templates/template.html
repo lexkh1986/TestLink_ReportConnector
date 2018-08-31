@@ -10,24 +10,28 @@ Integration Jenkins & Testlink: Export report
                 color: green;
                 font-weight: bold;
                 text-decoration: none;
+				margin: 0;
             }
 
             a.status-fail, p.status-fail {
                 color: red;
                 font-weight: bold;
                 text-decoration: none;
+				margin: 0;
             }
 			
             a.status-notrun, p.status-notrun {
                 color: black;
                 font-weight: bold;
                 text-decoration: none;
+				margin: 0;
             }
 
             a.status-skip, p.status-skip {
                 color: gray;
                 font-weight: bold;
                 text-decoration: none;
+				margin: 0;
             }
             
             a:hover {
@@ -175,6 +179,19 @@ Integration Jenkins & Testlink: Export report
 				</tbody>
 			</table>
         </tbody>
-			${ac_list_testcase_manual}
+			<table style="display:${ac_have_manual_list}"> 
+                        <thead>                        
+                            <tr id="title"><th style="background: white; color:black" colspan="5">List manual testcases: </th></tr>
+                            <tr id="title" style="background: #00A98F">
+                                <th style="width: 19%;">Testlink ID</th>
+                                <th style="width: 73%;">Testcase name</th>
+                                <th style="width: 8%;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ac_list_testcase_manual}
+                        </tbody>
+			</table>
+			
         </body>
     </html>

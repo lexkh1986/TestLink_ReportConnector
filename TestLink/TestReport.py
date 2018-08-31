@@ -20,10 +20,8 @@ class TestCase:
         self.isCritical = isCritical
         self.steps = []
 
-    def setSteps(self, step_number, actions, expected_results):
-        for i, val in enumerate(self.steps):
-            if val.get('step_number') == step_number: del self.steps[i]
-        self.steps.append({'step_number':step_number,
+    def setSteps(self, actions, expected_results):
+        self.steps.append({'step_number':len(self.steps)+1,
                            'actions':actions,
                            'expected_results':expected_results,
                            'execution_type':2})
@@ -44,10 +42,10 @@ class TestCase:
         iDetails.update({'testlink_name':self.testlink_name})
         iDetails.update({'name_short':self.name_short})
         iDetails.update({'name_long':self.name_long})
-        iDetails.update({'summary':self.summary})
+        #iDetails.update({'summary':self.summary})
         iDetails.update({'isCritical':self.isCritical})
         iDetails.update({'status':self.run_status})
         iDetails.update({'report_link':self.run_rp_id})
         iDetails.update({'run_duration':self.run_duration})
-        iDetails.update({'test_msg':self.run_msg})
+        #iDetails.update({'test_msg':self.run_msg})
         return iDetails
