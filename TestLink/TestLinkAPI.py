@@ -2,11 +2,12 @@ from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport, TestCase
 from testlink import *
 from numpy import *
+import os
 
 class TestLinkAPI(object):
     STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
     ISAUTOMATED = {False:1, True:2}
-    CONFIG_PATH = 'TestLink\settings.txt'
+    CONFIG_PATH =  os.path.dirname(__file__) + '/settings.txt'
     
     def __init__(self, TestReport_):
         #TestLink report
@@ -14,12 +15,13 @@ class TestLinkAPI(object):
 
         #TestLink connection attributes
         _getVarFromFile(self.CONFIG_PATH)
-        self.SERVER_URL = data.SERVER_URL
+        self.SERVER_URL = 'http://testlink.nexcel.vn/lib/api/xmlrpc/v1/xmlrpc.php'
         self.DEVKEY = data.DEVKEY
         self._report().PROJECT_NAME = data.PROJECT
         self._report().TESTPLAN_NAME = data.TESTPLAN
         self._report().TESTBUILD_NAME = data.TESTBUILD
         self._report().OWNER_NAME = data.RUNOWNER
+        self._report().isJenkins = data.isJenkins
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)

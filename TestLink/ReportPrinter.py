@@ -27,7 +27,8 @@ class ReportPrinter(TestReport):
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
                               '%s%s' % (os.path.dirname(__file__), self.REPORT_TEMPLATE_PATH),
                               self._export(),
-                              self._export_manual_report())
+                              self._export_manual_report(),
+                              output_path)
 
         else:
             print 'This run is a rerun process. Merging result...'
@@ -35,12 +36,15 @@ class ReportPrinter(TestReport):
             array_auto_2 = self._export()
             
             for item in array_auto_2: array_auto_1[where((array_auto_1[:,0]==item[0]) & (array_auto_1[:,4]==item[4])), 1] = item[1]
+
+            array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter=',',dtype=str)
             
             print 'Re-printing html report...'
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
-                              '%s' % self.REPORT_TEMPLATE_PATH,
+                              '%s%s' % (os.path.dirname(__file__), self.REPORT_TEMPLATE_PATH),
                               array_auto_1,
-                              self._export_manual_report())
+                              array_manual,
+                              output_path)
 
         #Log notifications
         if os.path.isfile('%s\%s' % (output_path, self.REPORT_HTML_PATH)):
@@ -50,10 +54,13 @@ class ReportPrinter(TestReport):
 
     def _export(self):
         iRpt = [self.iContent[0]._print().keys()]
+        # Remove summary and test_msg before save csv
         del iRpt[0][7]
+        del iRpt[0][2]
         for elem in self.iContent:
             v = elem._print().values()
             del v[7]
+            del v[2]
             iRpt.append(v)
         
         return array(iRpt)
@@ -67,7 +74,7 @@ class ReportPrinter(TestReport):
         except Exception:
             return array([['testlink_id', 'testlink_name', 'status']])
 
-    def _export_html(self, filepath, templatepath, nyreport, nymanual):
+    def _export_html(self, filepath, templatepath, nyreport, nymanual, output_path):
         '''
             Export to file html (for show report in Jenkins)
             filepath: path save file html\n
@@ -84,7 +91,10 @@ class ReportPrinter(TestReport):
         # get build url from jenkins
         stringbuild = 'None'
         if os.path.isfile('./Build.txt'):
-            stringbuild = _read_txt_to_string('./Build.txt').replace('%20',' ')
+            stringbuild = _read_txt_to_string('./Build.txt').replace('%20',' ') + 'robot/report/log.html#'
+
+        if self.isJenkins == 'False':
+            stringbuild = output_path + '/log.html#'
         
         # get template html
         reporthtml = _read_txt_to_string(templatepath)
@@ -108,7 +118,8 @@ class ReportPrinter(TestReport):
             per = '0' if numpassmanual == 0 else str(round(float(numpassmanual) / (numpassmanual + numfailmanual + numnotrunmanual) * 100))
             for r in (('${ac_count_pass}', str(numpass + numpassmanual)),('${ac_count_fail}', str(numfail + numfailmanual)), ('${ac_count_notrun}', str(numnotrunmanual)), ('${ac_runowner}', runowner), ('${ac_project}', project),
                       ('${ac_plan}', plan), ('${ac_build}', build), ('${ac_link_build}', stringbuild), ('${ac_auto_percent}', str(round(float(numpass) / (numpass + numfail) * 100))), ('${ac_auto_pass}', str(numpass)), ('${ac_auto_fail}', str(numfail)), ('${ac_auto_skip}', str(numskip)),
-                      ('${ac_manual_percent}', per), ('${ac_manual_pass}', str(numpassmanual)), ('${ac_manual_fail}', str(numfailmanual)), ('${ac_manual_notrun}', str(numnotrunmanual)), ('${ac_status}', 'JOB SUCCESS') if numfail == 0 and numfailmanual == 0 else ('${ac_status}', 'JOB FAILURE')):
+                      ('${ac_manual_percent}', per), ('${ac_manual_pass}', str(numpassmanual)), ('${ac_manual_fail}', str(numfailmanual)), ('${ac_manual_notrun}', str(numnotrunmanual)),
+                      ('${ac_status}', 'JOB SUCCESS') if numfail == 0 and numfailmanual == 0 else ('${ac_status}', 'JOB FAILURE'), ('${ac_color}', '#00A98F') if numfail == 0 and numfailmanual == 0 else ('${ac_color}', '#ff0000')):
                 reporthtml = reporthtml.replace(*r)
             
             html_string=''''''
@@ -116,7 +127,7 @@ class ReportPrinter(TestReport):
             string = ''    
             for item in nyreport:
                 if item[0] == 'name_short': continue
-                suite = item[8].replace('.' + item[0], '')
+                suite = item[7].replace('.' + item[0], '')
                 if suite != string:
                     suite_string = '''<tr>
                                         <td class="suite" colspan='5'>'''+suite.replace(".", " >> ")+'''</td>
@@ -126,10 +137,10 @@ class ReportPrinter(TestReport):
                     
                 table_string = ""
 
-                s = str(round((float(item[7])/(1000.00*60))%60, 2)) + ' m'
+                s = str(round((float(item[6])/(1000.00*60))%60, 2)) + ' m'
                 
-                testlinkID = 'None' if (item[4]==None or item[4]=='') else item[4]
-                testname = 'None' if (item[3]==None or item[3]=='') else item[3]
+                testlinkID = 'None' if (item[3]==None or item[3]=='') else item[3]
+                testname = 'None' if (item[2]==None or item[2]=='') else item[2]
                 table_string = '''
                     <tr>
                         <td>'''+ testlinkID +'''</td>
@@ -138,17 +149,17 @@ class ReportPrinter(TestReport):
                         <td>'''+s+'''</td>'''
                 if item[1] == 'PASS':
                     table_string = table_string + '''
-                        <td><a class="status-pass" value="p" target="_blank" rel="noopener" href="''' + stringbuild +'''robot/report/log.html#''' +item[6]+'''">'''+item[1]+'''</a></td>
+                        <td><a class="status-pass" value="p" target="_blank" rel="noopener" href="''' + stringbuild +item[5]+'''">'''+item[1]+'''</a></td>
                     </tr>
                     '''
                 elif item[1] == 'FAIL':
                     table_string = table_string + '''
-                        <td><a class="status-fail" value="f" target="_blank" rel="noopener" href="'''+ stringbuild + '''robot/report/log.html#'''+item[6]+'''">'''+item[1]+'''</a></td>
+                        <td><a class="status-fail" value="f" target="_blank" rel="noopener" href="'''+ stringbuild +item[5]+'''">'''+item[1]+'''</a></td>
                     </tr>
                     '''
                 else:
                     table_string = table_string + '''
-                        <td><a class="status-skip" value="f" target="_blank" rel="noopener" href="'''+ stringbuild + '''robot/report/log.html#'''+item[6]+'''">'''+item[1]+'''</a></td>
+                        <td><a class="status-skip" value="f" target="_blank" rel="noopener" href="'''+ stringbuild +item[5]+'''">'''+item[1]+'''</a></td>
                     </tr>
                     '''
                 html_string = html_string + table_string
@@ -180,15 +191,15 @@ class ReportPrinter(TestReport):
                     note_string = '''<td>''' + tc[2] + '''</td>'''
                     note_string = note_string + '''<td>''' + tc[1] + '''</td>'''
                     if tc[0] == 'PASS':
-                        note_string = note_string + '''<td><p class="status-pass">PASS</p></td>
+                        note_string = note_string + '''<td><p class="status-pass" style="margin: 0;">PASS</p></td>
                                 </tr>
                         <tr>'''
                     elif tc[0] == 'FAIL':
-                        note_string = note_string + '''<td><p class="status-fail">FAIL</p></td>
+                        note_string = note_string + '''<td><p class="status-fail" style="margin: 0;">FAIL</p></td>
                                 </tr>
                         <tr>'''
                     else:
-                        note_string = note_string + '''<td><p class="status-notrun">NOT RUN</p></td>
+                        note_string = note_string + '''<td><p class="status-notrun" style="margin: 0;">NOT RUN</p></td>
                                 </tr>
                         <tr>'''
                     html_string = html_string + note_string

@@ -8,10 +8,18 @@ del /f /q /s "%~dp0\Report\*.*"
 del /f /q /s "%~dp0\TempData\*.*"
 if exist "%~dp0\geckodriver.log" del /f /q /s "%~dp0\geckodriver.log"
 
+:: INFO OF THIS BUILD
+echo DEVKEY = '0761f1d979c0abf9b1483ff9801c3a91' >"%~dp0\TestLink\settings.txt"
+echo PROJECT = 'NAP Special Delete' >>"%~dp0\TestLink\settings.txt"
+echo TESTPLAN = 'Demo RobotFramework TestPlan' >>"%~dp0\TestLink\settings.txt"
+echo TESTBUILD = 'Demo Build 1' >>"%~dp0\TestLink\settings.txt"
+echo RUNOWNER = 'Jane Dinh' >>"%~dp0\TestLink\settings.txt"
+echo isJenkins = 'True' >>"%~dp0\TestLink\settings.txt"
+
 :: FIST RUN TEST
 echo:
 echo #### First run tests
-cmd /c pybot --listener "%~dp0\Libraries\PythonListener.py" -d "%~dp0\Report" -o output.xml "%~dp0\Testsuites"
+cmd /c pybot --listener "%~dp0\TestLink\TestLinkListener.py" -d "%~dp0\Report" -o output.xml "%~dp0\Testsuites"
 
 :: LOGICAL CHECK FOR RERUN FAIL TEST
 if errorlevel 1 goto DGTFO
@@ -23,7 +31,7 @@ exit /b
 :: SECOND RUN FOR FAIL TEST
 echo:
 echo #### Rerun failed tests
-cmd /c pybot --listener "%~dp0\Libraries\PythonListener.py" -d "%~dp0\Report" -R "%~dp0\Report\output.xml" -o rerun.xml "%~dp0\Testsuites"
+cmd /c pybot --listener "%~dp0\TestLink\TestLinkListener.py" -d "%~dp0\Report" -R "%~dp0\Report\output.xml" -o rerun.xml "%~dp0\Testsuites"
 
 :: MERGE TEST RESULTS
 echo:
