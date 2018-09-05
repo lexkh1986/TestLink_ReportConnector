@@ -35,7 +35,7 @@ class ReportPrinter(TestReport):
             array_auto_1 = genfromtxt('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), delimiter=',',dtype=str)
             array_auto_2 = self._export()
             
-            for item in array_auto_2: array_auto_1[where((array_auto_1[:,0]==item[0]) & (array_auto_1[:,4]==item[4])), 1] = item[1]
+            for item in array_auto_2: array_auto_1[where((array_auto_1[:,0]==item[0]) & (array_auto_1[:,3]==item[3])), 1] = item[1]
 
             array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter=',',dtype=str)
             
@@ -82,7 +82,7 @@ class ReportPrinter(TestReport):
         
         # get build url from jenkins
         stringbuild = 'None'
-        if os.path.isfile('./Build.txt'):
+        if os.path.isfile(output_path + '/../Build.txt'):
             stringbuild = _read_txt_to_string('./Build.txt').replace('%20',' ') + 'robot/report/log.html#'
 
         if self.IS_JENKIN_RUN is False:

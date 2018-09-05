@@ -1,2 +1,2 @@
 isJenkinRun=True
-isLogSteps=False
+isLogSteps=True

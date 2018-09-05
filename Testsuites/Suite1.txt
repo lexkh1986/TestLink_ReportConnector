@@ -9,8 +9,11 @@ Library           ../TestLink/Methods.py
 TC1
     [Documentation]    This test case verify search
     Log Step    Login    Done
-    Log Step    Search match J    Done
-    Log Step    Show tickets    Done
+    # Do something
+    Log Step    Search matchid    Check invalid match
+    # Do something
+    Log Step    Show tickets    Check detail in betlist
+    # Do something
 
 TC2
     [Documentation]    Veryfy ...
