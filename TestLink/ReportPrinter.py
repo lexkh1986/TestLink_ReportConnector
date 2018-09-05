@@ -83,7 +83,7 @@ class ReportPrinter(TestReport):
         # get build url from jenkins
         stringbuild = 'None'
         if os.path.isfile(output_path + '/../Build.txt'):
-            stringbuild = _read_txt_to_string('./Build.txt').replace('%20',' ') + 'robot/report/log.html#'
+            stringbuild = _read_txt_to_string(output_path + '/../Build.txt').replace('%20',' ') + 'robot/report/log.html#'
 
         if self.IS_JENKIN_RUN is False:
             stringbuild = output_path + '/log.html#'
