@@ -101,7 +101,7 @@ class TestLinkAPI(object):
                                          summary = _parse_html(TestCase_.summary),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                          steps=[])
-                elif self._report().IS_LOG_STEPS is False:
+                elif self._report().IS_LOG_STEPS is True:
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
                                          summary = _parse_html(TestCase_.summary),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
