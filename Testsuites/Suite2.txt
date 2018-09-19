@@ -5,7 +5,9 @@ Metadata          TC5    NAP-Special Del-4399
 *** Test Cases ***
 TC4
     Log    ${TEST_NAME}
+    Sleep    15
 
 TC5
     Log    ${TEST_NAME}
     Fail    Sample fail test 5
+    Sleep    19

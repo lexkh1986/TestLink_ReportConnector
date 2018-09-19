@@ -14,12 +14,15 @@ TC1
     # Do something
     Log Step    Show tickets    Check detail in betlist
     # Do something
+    Sleep    2
 
 TC2
     [Documentation]    Veryfy ...
     Log Step    Login    Done
     Log Step    Search match temp    Done
     ac log    Test J
+    Sleep    4
 
 TC3
     Log    ${TEST_NAME}
+    Sleep    1

@@ -6,14 +6,18 @@ Metadata          TC8    NAP-Special Del-4402
 *** Test Cases ***
 TC6
     Log    ${TEST_NAME}
+    Sleep    2
 
 TC7
     [Tags]    aa
     Log    ${TEST_NAME}
     Fail    Sample fail test 7
+    Sleep    10
 
 TC8
     Log    ${TEST_NAME}
+    Sleep    11
 
 TC9
     Log    ${TEST_NAME}
+    Sleep    22
