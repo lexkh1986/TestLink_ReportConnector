@@ -14,6 +14,7 @@ class TestLinkListener(object):
     def __init__(self):
         self.TESTLINK_REPORT = ReportPrinter()
         self.TESTLINK_API = TestLinkAPI(self.TESTLINK_REPORT)
+        self.TESTLINK_REPORT.apiRef = self.TESTLINK_API
         if set(sys.argv) & set(['-R','--rerunfailed']):
             self.TESTLINK_REPORT.isRebot = True
 

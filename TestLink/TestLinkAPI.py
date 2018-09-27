@@ -1,5 +1,6 @@
 from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport, TestCase
+from Misc import *
 from testlink import *
 from numpy import *
 import os
@@ -15,7 +16,7 @@ class TestLinkAPI(object):
         self.TESTLINK_REPORT = TestReport_
 
         #TestLink connection attributes
-        _getVarFromFile(self.EXEC_PATH)
+        data = getVarFromFile(self.EXEC_PATH)
         self.SERVER_URL = 'http://testlink.nexcel.vn/lib/api/xmlrpc/v1/xmlrpc.php'
         self.DEVKEY = data.DEVKEY
         self._report().PROJECT_NAME = data.PROJECT
@@ -23,10 +24,9 @@ class TestLinkAPI(object):
         self._report().TESTBUILD_NAME = data.TESTBUILD
         self._report().OWNER_NAME = data.RUNOWNER
 
-        _getVarFromFile(self.CONFIG_PATH)
+        data = getVarFromFile(self.CONFIG_PATH)
         self._report().IS_JENKIN_RUN = data.isJenkinRun
-        self._report().IS_LOG_STEPS = data.isLogSteps
-        print self._report().IS_LOG_STEPS, self._report().IS_JENKIN_RUN
+        self._report().USE_SUMMARY_AS_STEP = data.useSummaryAsStep
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)
@@ -60,11 +60,19 @@ class TestLinkAPI(object):
         raise Exception('Could find specified TestBuild %s in TestPlan %s' % (self._report().TESTBUILD_NAME,
                                                                               self._report().TESTPLAN_NAME))
 
+    def getTC_Steps(self, iTestLink_id):
+        if self._report().USE_SUMMARY_AS_STEP is False:
+            return parse_steps(self.CONN.getTestCase(testcaseexternalid = iTestLink_id)[0]['steps'], True)
+        else:
+            return self.CONN.getTestCase(testcaseexternalid = iTestLink_id)[0]['summary']
+        
+
     def getTC_TestLink_Details(self, TestCase_):
         iTestLink_id = BuiltIn().get_variable_value('${SUITE METADATA}').get(TestCase_.name_short)
         if iTestLink_id is not None:
             iTestLink_details = self.CONN.getTestCase(testcaseexternalid = iTestLink_id)
-            TestCase_.setDetail(testlink_id = iTestLink_id, testlink_name = iTestLink_details[0]['name'])
+            TestCase_.setDetail(testlink_id = iTestLink_id,
+                                testlink_name = iTestLink_details[0]['name'])
         else:
             TestCase_.setDetail(testlink_id = None,
                                 testlink_name = None)
@@ -76,7 +84,9 @@ class TestLinkAPI(object):
                                                          details = 'simple').values()
         self._report().iManualContent = [{'testlink_id':elem[0]['full_external_id'],
                                           'testlink_name':elem[0]['tcase_name'],
-                                          'status':self.STATUS.get(elem[0]['exec_status'])} \
+                                          'testlink_steps':self.getTC_Steps(elem[0]['full_external_id']),
+                                          'status':self.STATUS.get(elem[0]['exec_status']),
+                                          'testlink_shortid':elem[0]['external_id']} \
                                          for elem in iTC_TestLink \
                                          if elem[0]['full_external_id'] not in iTC_Auto]
 
@@ -85,7 +95,7 @@ class TestLinkAPI(object):
         if switcher:
             if TestCase_.testlink_id is not None:
                 self.CONN.reportTCResult(testcaseexternalid = TestCase_.testlink_id,
-                                         status = _dict_getkey(self.STATUS, TestCase_.run_status),
+                                         status = dict_getkey(self.STATUS, TestCase_.run_status),
                                          testplanid = self._report().TESTPLAN_ID,
                                          buildname = self._report().TESTBUILD_NAME,
                                          notes = TestCase_.run_msg,
@@ -95,41 +105,18 @@ class TestLinkAPI(object):
         #Do synchronize automation steps to TestLink...
         if switcher:
             if TestCase_.testlink_id is not None:
-                #print self._report().IS_LOG_STEPS
                 if not TestCase_.steps:
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
-                                         summary = _parse_html(TestCase_.summary),
+                                         summary = parse_summary(TestCase_.summary),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                          steps=[])
-                elif self._report().IS_LOG_STEPS is False:
+                elif self._report().USE_SUMMARY_AS_STEP is False:
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
-                                         summary = _parse_html(TestCase_.summary),
+                                         summary = parse_summary(TestCase_.summary),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                          steps=TestCase_.steps)
                 else:
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
-                                         summary = _parse_html(TestCase_.summary + '\n' + '\n'.join('Step: %s\n\tVerify point: %s' % (d['actions'], d['expected_results']) for d in TestCase_.steps)),
+                                         summary = parse_summary(TestCase_.summary + '\n' + '\n'.join('Step: %s\n\tVerify point: %s' % (d['actions'], d['expected_results']) for d in TestCase_.steps)),
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                          steps=[])
-
-def _parse_html(string):
-    val = string.split('''\n''')
-    for i, v in enumerate(val):
-        val[i] = '%s<br/>' % v
-        val[i] = val[i].replace('Step:','<strong>&emsp;Step:</strong>')
-        val[i] = val[i].replace('Checkpoint:','<strong>&emsp;Checkpoint:</strong>')
-        val[i] = val[i].replace('Verify point:','<strong>&emsp;Verify point:</strong>')
-        val[i] = val[i].replace('*TC Steps:*','<strong>&emsp;*TC Steps:*</strong>')
-        val[i] = val[i].replace('*VP:*','<strong>&emsp;*VP:*</strong>')
-    completedStr = ''.join(val)
-    return completedStr
-
-def _dict_getkey(dict_, value):
-    return next((key for key, val in dict_.items() if val == value), None)
-
-def _getVarFromFile(filename):
-    import imp
-    with open(filename) as f:
-        global data
-        data = imp.new_module('data')
-        exec(f.read(), data.__dict__)

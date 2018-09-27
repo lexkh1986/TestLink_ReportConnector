@@ -1,2 +1,2 @@
 isJenkinRun=True
-isLogSteps=True
+useSummaryAsStep=True
