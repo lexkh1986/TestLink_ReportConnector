@@ -18,11 +18,11 @@ def getVarFromFile(filename):
 def parse_steps(steps, isReversed=False):
     if isReversed:
         if steps not in (None, ''):
-            tmpStr = ['Step%s: %s\nExpectation: %s\n' % (s.get('step_number'),
+            tmpStr = ['Step%s: %s<br/>Expectation: %s<br/>' % (s.get('step_number'),
                                                      s.get('actions'),
                                                      s.get('expected_results'))\
                       for s in steps]
-            return '\n'.join(tmpStr)
+            return '<br/>'.join(tmpStr)
         return steps
     else:
         if steps not in (None, ''):
