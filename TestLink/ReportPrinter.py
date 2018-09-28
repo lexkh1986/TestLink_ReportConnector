@@ -64,7 +64,7 @@ class ReportPrinter(TestReport):
             for i, v in enumerate(tmpContent): iRpt.append(v)
             return array(iRpt)
         except Exception:
-            return array([['testlink_id', 'testlink_name', 'status', 'testlink_shortid', 'testlink_steps']])
+            return array([['testlink_id', 'testlink_name', 'status']])
 
     def _export_html(self, filepath, templatepath, nyreport, nymanual, output_path):
         '''
@@ -172,9 +172,11 @@ class ReportPrinter(TestReport):
                 reporthtml = reporthtml.replace('${ac_have_manual_list}', '')
                 for tc in nymanual:
                     if tc[0] == 'status': continue
+                    testlinkshortID = tc[2][len(self.PROJECT_PREFIX)+1-len(tc[2]):]
+                    testSteps = self.apiRef.getTC_Steps(tc[2])
                     
-                    note_string = '''<tr><td>''' + tc[4] + '''</td>'''
-                    note_string = note_string + '''<td href="#s''' + tc[2] + '''" data-toggle="collapse" style="cursor:pointer">''' + tc[1] + '''<div id="s''' + tc[2] + '''" class="collapse"><b>Steps:</b></br>''' + tc[3] + '''</div></td>'''
+                    note_string = '''<tr><td>''' + tc[2] + '''</td>'''
+                    note_string = note_string + '''<td href="#s''' + testlinkshortID + '''" data-toggle="collapse" style="cursor:pointer">''' + tc[1] + '''<div id="s''' + testlinkshortID + '''" class="collapse"><b>Steps:</b></br>''' + testSteps + '''</div></td>'''
                     if tc[0] == 'PASS': note_string = note_string + '''<td><p class="status-pass">PASS</p></td></tr>'''
                     elif tc[0] == 'FAIL': note_string = note_string + '''<td><p class="status-fail">FAIL</p></td></tr>'''
                     else: note_string = note_string + '''<td><p class="status-notrun">NOT RUN</p></td></tr>'''

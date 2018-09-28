@@ -3,7 +3,7 @@ from TestReport import TestReport, TestCase
 from Misc import *
 from testlink import *
 from numpy import *
-import os
+import os, traceback
 
 class TestLinkAPI(object):
     STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
@@ -61,11 +61,14 @@ class TestLinkAPI(object):
                                                                               self._report().TESTPLAN_NAME))
 
     def getTC_Steps(self, iTestLink_id):
-        if self._report().USE_SUMMARY_AS_STEP is False:
-            return parse_steps(self.CONN.getTestCase(testcaseexternalid = iTestLink_id)[0]['steps'], True)
-        else:
-            return self.CONN.getTestCase(testcaseexternalid = iTestLink_id)[0]['summary']
-        
+        try:
+            if self._report().USE_SUMMARY_AS_STEP is False:
+                return parse_steps(self.CONN.getTestCase(testcaseexternalid = str(iTestLink_id))[0]['steps'], True)
+            else:
+                return self.CONN.getTestCase(testcaseexternalid = str(iTestLink_id))[0]['summary']
+        except Exception, err:
+            traceback.print_exc()
+            return ''
 
     def getTC_TestLink_Details(self, TestCase_):
         iTestLink_id = BuiltIn().get_variable_value('${SUITE METADATA}').get(TestCase_.name_short)
@@ -84,9 +87,7 @@ class TestLinkAPI(object):
                                                          details = 'simple').values()
         self._report().iManualContent = [{'testlink_id':elem[0]['full_external_id'],
                                           'testlink_name':elem[0]['tcase_name'],
-                                          'testlink_steps':self.getTC_Steps(elem[0]['full_external_id']),
-                                          'status':self.STATUS.get(elem[0]['exec_status']),
-                                          'testlink_shortid':elem[0]['external_id']} \
+                                          'status':self.STATUS.get(elem[0]['exec_status'])} \
                                          for elem in iTC_TestLink \
                                          if elem[0]['full_external_id'] not in iTC_Auto]
 
