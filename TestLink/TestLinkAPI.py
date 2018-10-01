@@ -117,7 +117,10 @@ class TestLinkAPI(object):
                                          executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                          steps=TestCase_.steps)
                 else:
+                    stepStr = '\n'.join('%s\n%s' % (d['actions'], d['expected_results'])
+                                        if d['expected_results'] not in ('', None)
+                                        else '%s' % d['actions'] for d in TestCase_.steps)
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
-                                         summary = parse_summary(TestCase_.summary + '\n' + '\n'.join('Step: %s\n\tVerify point: %s' % (d['actions'], d['expected_results']) for d in TestCase_.steps)),
-                                         executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
-                                         steps=[])
+                                             summary = parse_summary('%s\n%s' % (TestCase_.summary, stepStr)),
+                                             executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
+                                             steps=[])
