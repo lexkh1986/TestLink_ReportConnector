@@ -8,8 +8,8 @@ import os, traceback
 class TestLinkAPI(object):
     STATUS = {'p':'PASS', 'f':'FAIL', 'n':'NOT RUN', 'b':'BLOCK'}
     ISAUTOMATED = {False:1, True:2}
-    EXEC_PATH =  os.path.dirname(__file__) + '/TL_Exec_Info.txt'
-    CONFIG_PATH =  os.path.dirname(__file__) + '/TL_Config.txt'
+    EXEC_PATH =  os.path.dirname(__file__) + '/../TL_Exec_Info.txt'
+    CONFIG_PATH =  os.path.dirname(__file__) + '/../TL_Config.txt'
     
     def __init__(self, TestReport_):
         #TestLink report
