@@ -1,2 +1,0 @@
-isJenkinRun=True
-useSummaryAsStep=True
