@@ -1,0 +1,5 @@
+DEVKEY = '0761f1d979c0abf9b1483ff9801c3a91' 
+PROJECT = 'NAP Special Delete' 
+TESTPLAN = 'Demo RobotFramework TestPlan' 
+TESTBUILD = 'Demo Build 1' 
+RUNOWNER = 'Jane Dinh' 
