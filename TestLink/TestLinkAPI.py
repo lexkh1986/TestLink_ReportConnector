@@ -121,6 +121,6 @@ class TestLinkAPI(object):
                                         if d['expected_results'] not in ('', None)
                                         else '%s' % d['actions'] for d in TestCase_.steps)
                     self.CONN.updateTestCase(testcaseexternalid = TestCase_.testlink_id,
-                                             summary = parse_summary('%s\n%s' % (TestCase_.summary, stepStr)),
+                                             summary = parse_summary('%s\n%s' % (TestCase_.summary, stepStr) if TestCase_.summary not in (None, '') else '%s' % stepStr),
                                              executiontype = self.ISAUTOMATED.get(TestCase_.isAutomated),
                                              steps=[])
