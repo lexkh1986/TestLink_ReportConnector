@@ -19,6 +19,7 @@ class TestCase:
         self.isAutomated = isAutomated
         self.isCritical = isCritical
         self.steps = []
+        self.setDetail(None, None)
 
     def setSteps(self, actions, expected_results):
         self.steps.append({'step_number':len(self.steps)+1,

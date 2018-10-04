@@ -71,14 +71,13 @@ class TestLinkAPI(object):
             return ''
 
     def getTC_TestLink_Details(self, TestCase_):
-        iTestLink_id = BuiltIn().get_variable_value('${SUITE METADATA}').get(TestCase_.name_short)
-        if iTestLink_id is not None:
+        iTestLink_id = TestCase_.testlink_id
+        if iTestLink_id is None:
+            iTestLink_id = BuiltIn().get_variable_value('${SUITE METADATA}').get(TestCase_.name_short)
+        if iTestLink_id not in (None, ''):
             iTestLink_details = self.CONN.getTestCase(testcaseexternalid = iTestLink_id)
             TestCase_.setDetail(testlink_id = iTestLink_id,
                                 testlink_name = iTestLink_details[0]['name'])
-        else:
-            TestCase_.setDetail(testlink_id = None,
-                                testlink_name = None)
 
     def getRP_TestLink_Manual(self):
         iTC_Auto = [elem._print()['testlink_id'] for elem in self._report().iContent]

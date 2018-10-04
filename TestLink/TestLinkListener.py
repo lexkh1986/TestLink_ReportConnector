@@ -20,13 +20,13 @@ class TestLinkListener(object):
 
     def start_suite(self, name, attrs):
         self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
-        
+
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object
-        self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
         BuiltIn().set_test_variable('${TESTLINK_iTC}', self._iTC)
 
     def end_test(self, name, attrs):
+        self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
         self._buildResult(self._iTC, attrs) #Build result object
         self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
         self.TESTLINK_API.updateTC_Step(self._iTC, self._iSyncSteps) #Log auto steps to TestCase sumarry

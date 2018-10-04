@@ -18,3 +18,13 @@ class Methods(object):
             if expectation != '': txtMsg = 'Step: %s\nVP: %s' % (step, expectation) 
             BuiltIn().log_to_console(txtMsg)
         iTC.setSteps(step, expectation)
+
+    def register_testlink_id(self, *testlink_id):
+        '''
+        Register this testcase name with one or more testlink id\n
+        Note: If 1-1 link setting method is selected. Only the first id param will be used\n
+        '''
+        if testlink_id:
+            iTC = BuiltIn().get_variable_value('${TESTLINK_iTC}')
+            iTC.testlink_id = testlink_id[0].strip()
+        
