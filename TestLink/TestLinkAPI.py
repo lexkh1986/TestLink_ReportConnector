@@ -92,14 +92,24 @@ class TestLinkAPI(object):
 
     def updateTC_Result(self, TestCase_, switcher):
         #Do synchronize automation results to TestLink...
-        if switcher:
-            if TestCase_.testlink_id is not None:
-                self.CONN.reportTCResult(testcaseexternalid = TestCase_.testlink_id,
-                                         status = dict_getkey(self.STATUS, TestCase_.run_status),
-                                         testplanid = self._report().TESTPLAN_ID,
-                                         buildname = self._report().TESTBUILD_NAME,
-                                         notes = TestCase_.run_msg,
-                                         execduration = (TestCase_.run_duration/(1000.0*60))%60)
+            if switcher:
+                if TestCase_.testlink_id is not None:
+                    try:
+                        self.CONN.reportTCResult(testcaseexternalid = TestCase_.testlink_id,
+                                                 status = dict_getkey(self.STATUS, TestCase_.run_status),
+                                                 testplanid = self._report().TESTPLAN_ID,
+                                                 buildname = self._report().TESTBUILD_NAME,
+                                                 notes = TestCase_.run_msg,
+                                                 execduration = (TestCase_.run_duration/(1000.0*60))%60)
+                    except Exception, err:
+                        if str(err).find('3030') == 0:
+                            print 'NOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
+                                  % (TestCase_.testlink_id, TestCase_.testlink_name)
+                            TestCase_.testlink_name = '%s (Not in TestPlan)' % TestCase_.testlink_name
+                else:
+                    TestCase_.testlink_name = 'Unidetified ID from TestLink'
+                    TestCase_.run_status = 'SKIP'
+                    print 'NOTE: This testcase has no linked id to TestLink. Run result will be tosssed out.'
 
     def updateTC_Step(self, TestCase_, switcher):
         #Do synchronize automation steps to TestLink...

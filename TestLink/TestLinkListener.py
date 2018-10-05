@@ -26,11 +26,14 @@ class TestLinkListener(object):
         BuiltIn().set_test_variable('${TESTLINK_iTC}', self._iTC)
 
     def end_test(self, name, attrs):
+        self._buildTCResult(self._iTC, attrs) #Build result object
         self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
-        self._buildResult(self._iTC, attrs) #Build result object
         self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
         self.TESTLINK_API.updateTC_Step(self._iTC, self._iSyncSteps) #Log auto steps to TestCase sumarry
         self.TESTLINK_API.updateTC_Result(self._iTC, self._iSyncResults) #Update auto result to TestLink
+
+    def end_suite(self, name, attrs):
+        _syncTLMapper(attrs['tests'], attrs['source'])
 
     def output_file(self, path):
         if self.TESTLINK_REPORT.isRebot == False:
@@ -47,16 +50,13 @@ class TestLinkListener(object):
         return iTestCase
 
     @staticmethod
-    def _buildResult(iTC_, attrs):
-        #If TestCase not found on TestLink: mark as Fail
-        if iTC_.testlink_id is None:
-            attrs['status'] = 'SKIP'
-            attrs['message'] = 'Unidetified ID from TestLink'
-
+    def _buildTCResult(iTC_, attrs):
         iTC_.setResult(attrs['status'],
                        attrs['id'],
                        attrs['elapsedtime'],
                        attrs['message'])
         iTC_.summary = attrs['doc']
         
-
+    @staticmethod
+    def _syncTLMapper(tcList, source):
+        
