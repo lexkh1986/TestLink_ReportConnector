@@ -2,7 +2,8 @@ from robot.libraries.BuiltIn import BuiltIn
 from TestReport import TestReport, TestCase
 from TestLinkAPI import TestLinkAPI
 from ReportPrinter import ReportPrinter
-import sys
+from Misc import *
+import sys, os
 
 class TestLinkListener(object):
     ROBOT_LISTENER_API_VERSION = 2
@@ -20,6 +21,12 @@ class TestLinkListener(object):
 
     def start_suite(self, name, attrs):
         self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
+        isMeta, iCSVMeta = self._syncTLMapper(attrs['tests'], attrs['source'])
+        if isMeta:
+            iSuiteMeta = BuiltIn().get_variable_value('${SUITE METADATA}')
+            for iTC in [(elem.get('Test'), elem.get('TestLink_ID')) for elem in iCSVMeta]:
+                if iTC[0] not in iSuiteMeta.keys():
+                    BuiltIn().set_suite_metadata(iTC[0], iTC[1], True)
 
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object
@@ -31,9 +38,6 @@ class TestLinkListener(object):
         self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
         self.TESTLINK_API.updateTC_Step(self._iTC, self._iSyncSteps) #Log auto steps to TestCase sumarry
         self.TESTLINK_API.updateTC_Result(self._iTC, self._iSyncResults) #Update auto result to TestLink
-
-    def end_suite(self, name, attrs):
-        _syncTLMapper(attrs['tests'], attrs['source'])
 
     def output_file(self, path):
         if self.TESTLINK_REPORT.isRebot == False:
@@ -59,4 +63,17 @@ class TestLinkListener(object):
         
     @staticmethod
     def _syncTLMapper(tcList, source):
-        
+        if tcList:
+            iMapperPath = '%s.csv' % source[:-4]
+            iMapperExists = os.path.isfile(iMapperPath)
+            if iMapperExists:
+                iCurDict = read_csv_dict(iMapperPath)
+                iCurName = [elem.get('Test') for elem in iCurDict]
+                for iNew in tcList:
+                    if iNew not in iCurName: iCurDict.append({'Test':iNew, 'TestLink_ID':''})
+                write_csv_dict(iMapperPath, iCurDict)
+            else:
+                iCurDict = [{'Test':elem, 'TestLink_ID':''} for elem in tcList]
+                #write_csv_dict(iMapperPath, iCurDict)
+            return iMapperExists, iCurDict
+        return False, []

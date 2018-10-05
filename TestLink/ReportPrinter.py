@@ -135,13 +135,20 @@ class ReportPrinter(TestReport):
                 testlinkshortID = 'None' if (item[3]==None or item[3]=='') else testlinkID[len(self.PROJECT_PREFIX)+1-len(testlinkID):]
                 testname = 'None' if (item[2]==None or item[2]=='') else item[2]
                 testSteps = ''
+                table_string = '''<tr>
+                        <td>''' + testlinkID + '''</td>
+                        <td>''' + testname + '''</td>
+                        <td>''' + item[0] + '''</td>
+                        <td>''' + s + '''</td>'''
+                
                 if testlinkID != 'None':
                     testSteps = self.apiRef.getTC_Steps(testlinkID)
-                table_string = '''<tr>
+                    table_string = '''<tr>
                         <td>''' + testlinkID + '''</td>
                         <td href="#s''' + testlinkshortID + '''" data-toggle="collapse" style="cursor:pointer">''' + testname + '''<div id="s''' + testlinkshortID + '''" class="collapse"><b>Steps:</b></br>''' + testSteps + '''</div></td>
                         <td>''' + item[0] + '''</td>
                         <td>''' + s + '''</td>'''
+                
                 if item[1] == 'PASS':
                     table_string = table_string + '''
                         <td><a class="status-pass" value="p" target="_blank" rel="noopener" href="''' + stringbuild +item[5]+'''">'''+item[1]+'''</a></td>

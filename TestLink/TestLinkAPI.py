@@ -103,13 +103,13 @@ class TestLinkAPI(object):
                                                  execduration = (TestCase_.run_duration/(1000.0*60))%60)
                     except Exception, err:
                         if str(err).find('3030') == 0:
-                            print 'NOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
+                            print '\nNOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
                                   % (TestCase_.testlink_id, TestCase_.testlink_name)
                             TestCase_.testlink_name = '%s (Not in TestPlan)' % TestCase_.testlink_name
                 else:
                     TestCase_.testlink_name = 'Unidetified ID from TestLink'
                     TestCase_.run_status = 'SKIP'
-                    print 'NOTE: This testcase has no linked id to TestLink. Run result will be tosssed out.'
+                    print '\nNOTE: This testcase has no linked id to TestLink. Run result will be tosssed out.'
 
     def updateTC_Step(self, TestCase_, switcher):
         #Do synchronize automation steps to TestLink...
