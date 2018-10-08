@@ -1,2 +1,5 @@
-isJenkinRun=True
+isJenkinRun=False
 useSummaryAsStep=True
+useCSVTestLinkMapper=True
+syncTestCaseSteps=True
+syncTestCaseResult=True

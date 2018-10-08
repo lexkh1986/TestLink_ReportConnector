@@ -27,6 +27,9 @@ class TestLinkAPI(object):
         data = getVarFromFile(self.CONFIG_PATH)
         self._report().IS_JENKIN_RUN = data.isJenkinRun
         self._report().USE_SUMMARY_AS_STEP = data.useSummaryAsStep
+        self._report().USE_CSV_MAPPER = data.useCSVTestLinkMapper
+        self._report().SYNC_STEPS = data.syncTestCaseSteps
+        self._report().SYNC_RESULTS = data.syncTestCaseResult
 
         #Init connection
         self.CONN = TestLinkHelper(self.SERVER_URL, self.DEVKEY).connect(TestlinkAPIGeneric)

@@ -1,6 +1,5 @@
 import re
 import os, sys
-import csv
 from HTMLParser import HTMLParser
 
 TAG_RE = re.compile(r'<[^>]+>')
@@ -77,26 +76,3 @@ def isReadonly(filepath):
             
 def rem_empty(string):
     return string.replace('\n','').replace('\t','').replace(' ','').encode('ascii','ignore')
-
-def read_csv(filepath, header = True):
-    data = []
-    with open(filepath) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        for row in reader:
-            data.append(row)
-            if not header:
-                del data[0]
-    return data
-
-def read_csv_dict(filepath):
-    with open(filepath) as f:
-        reader = csv.reader(f, skipinitialspace=True)
-        header = next(reader)
-        return [dict(zip(header, map(str, row))) for row in reader]
-
-def write_csv_dict(filepath, listDict):
-    keys = listDict[0].keys()
-    with open(filepath, 'wb') as output:
-        dict_writer = csv.DictWriter(output, keys)
-        dict_writer.writeheader()
-        dict_writer.writerows(listDict)

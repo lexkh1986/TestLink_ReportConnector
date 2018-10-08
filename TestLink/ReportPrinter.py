@@ -1,6 +1,6 @@
 from TestReport import TestReport
 from numpy import *
-import csv, os, traceback
+import os, csv, traceback
 
 class ReportPrinter(TestReport):
     REPORT_HTML_PATH = 'testlink_report.html'
@@ -16,11 +16,11 @@ class ReportPrinter(TestReport):
             if self.hasFailTest:
                 #Export list of automated tests in csv for 2nd run case
                 print 'Printing automated testcases list...'
-                _toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist())
+                toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist())
 
             #Export list of manual tests
             print 'Printing manual testcases list...'
-            _toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
+            toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
 
             #Print html report
             print 'Printing html report...'
@@ -200,7 +200,7 @@ def _read_txt_to_string(path):
     file = open(filename, 'r')
     return file.read()
   
-def _toCSV(filepath, source):
+def toCSV(filepath, source):
     with open(filepath, 'wb') as of:
         writer = csv.writer(of)
         writer.writerows(source)
