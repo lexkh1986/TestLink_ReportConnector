@@ -108,7 +108,8 @@ class TestLinkAPI(object):
                         if str(err).find('3030') == 0:
                             print '\nNOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
                                   % (TestCase_.testlink_id, TestCase_.testlink_name)
-                            TestCase_.testlink_name = '%s (Not in TestPlan)' % TestCase_.testlink_name
+                            TestCase_.testlink_name = '%s (Not included in TestPlan)' % TestCase_.testlink_name
+                            TestCase_.run_status = 'SKIP'
                 else:
                     TestCase_.testlink_name = 'Unidetified ID from TestLink'
                     TestCase_.run_status = 'SKIP'
