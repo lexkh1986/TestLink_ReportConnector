@@ -145,7 +145,7 @@ class ReportPrinter(TestReport):
                     testSteps = self.apiRef.getTC_Steps(testlinkID)
                     table_string = '''<tr>
                         <td>''' + testlinkID + '''</td>
-                        <td href="#s''' + testlinkshortID + '''" data-toggle="collapse" style="cursor:pointer">''' + testname + '''<div id="s''' + testlinkshortID + '''" class="collapse"><b>Steps:</b></br>''' + testSteps + '''</div></td>
+                        <td><details><summary>''' + testname + '''</summary><p><b>Steps:</b></br>''' + testSteps + '''</p></details></td>
                         <td>''' + item[0] + '''</td>
                         <td>''' + s + '''</td>'''
                 
@@ -182,7 +182,7 @@ class ReportPrinter(TestReport):
                     testSteps = self.apiRef.getTC_Steps(tc[2])
                     
                     note_string = '''<tr><td>''' + tc[2] + '''</td>'''
-                    note_string = note_string + '''<td href="#s''' + testlinkshortID + '''" data-toggle="collapse" style="cursor:pointer">''' + tc[1] + '''<div id="s''' + testlinkshortID + '''" class="collapse"><b>Steps:</b></br>''' + testSteps + '''</div></td>'''
+                    note_string = note_string + '''<td><details><summary>''' + tc[1] + '''</summary><p><b>Steps:</b></br>''' + testSteps + '''</p></details></td>'''
                     if tc[0] == 'PASS': note_string = note_string + '''<td><p class="status-pass">PASS</p></td></tr>'''
                     elif tc[0] == 'FAIL': note_string = note_string + '''<td><p class="status-fail">FAIL</p></td></tr>'''
                     else: note_string = note_string + '''<td><p class="status-notrun">NOT RUN</p></td></tr>'''
