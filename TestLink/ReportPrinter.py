@@ -143,9 +143,11 @@ class ReportPrinter(TestReport):
                 
                 if testlinkID != 'None':
                     testSteps = self.apiRef.getTC_Steps(testlinkID)
+                    pathFull = self.apiRef.getTC_Testlink_Path(testlinkshortID,testname)
+                    if pathFull == '': pathFull = 'Not Found.'
                     table_string = '''<tr>
                         <td>''' + testlinkID + '''</td>
-                        <td><details><summary>''' + testname + '''</summary><p><b>Steps:</b></br>''' + testSteps + '''</p></details></td>
+                        <td title="Path: ''' + pathFull + '''"><details><summary>''' + testname + '''</summary><p><b>Steps:</b></br>''' + testSteps + '''</p></details></td>
                         <td>''' + item[0] + '''</td>
                         <td>''' + s + '''</td>'''
                 

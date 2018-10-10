@@ -93,6 +93,28 @@ class TestLinkAPI(object):
                                          for elem in iTC_TestLink \
                                          if elem[0]['full_external_id'] not in iTC_Auto]
 
+    def getTC_Testlink_Path(self, iTestLink_id, iTestLink_name):
+        iTC_full_path = ''
+        if iTestLink_id is not None and iTestLink_name is not None:
+            try:
+                for iTC_Testlink in self.CONN.getTestCaseIDByName(testcasename=str(iTestLink_name)):
+                    iTC_ExternalID = iTC_Testlink['tc_external_id']
+                    iTC_ParentID = iTC_Testlink['parent_id']
+                    if iTC_ExternalID == iTestLink_id: break
+                iTC_full_path = iTestLink_name
+                isParent = 1
+                while isParent == 1:
+                    isParent = 0
+                    try:
+                        iTC_Testsuite = self.CONN.getTestSuiteByID(testsuiteid=iTC_ParentID)
+                        iTC_ParentID = iTC_Testsuite['parent_id']
+                        iTC_Name = iTC_Testsuite['name']
+                        iTC_full_path = iTC_Name + ' >> ' + iTC_full_path
+                        isParent = 1
+                    except Exception, err: isParent = 0
+            except Exception, err: print 'Testcase is not included in TestPlan'
+        return iTC_full_path
+
     def updateTC_Result(self, TestCase_, switcher):
         #Do synchronize automation results to TestLink...
             if switcher:
