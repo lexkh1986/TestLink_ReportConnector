@@ -93,27 +93,17 @@ class TestLinkAPI(object):
                                          for elem in iTC_TestLink \
                                          if elem[0]['full_external_id'] not in iTC_Auto]
 
-    def getTC_Testlink_Path(self, iTestLink_id, iTestLink_name):
-        iTC_full_path = ''
-        if iTestLink_id is not None and iTestLink_name is not None:
+    def getTC_Testlink_Path(self, iTestLink_shortid, iTestLink_name):
+        tmpPath = None
+        if iTestLink_shortid is not None and iTestLink_name is not None:
             try:
-                for iTC_Testlink in self.CONN.getTestCaseIDByName(testcasename=str(iTestLink_name)):
-                    iTC_ExternalID = iTC_Testlink['tc_external_id']
-                    iTC_ParentID = iTC_Testlink['parent_id']
-                    if iTC_ExternalID == iTestLink_id: break
-                iTC_full_path = iTestLink_name
-                isParent = 1
-                while isParent == 1:
-                    isParent = 0
-                    try:
-                        iTC_Testsuite = self.CONN.getTestSuiteByID(testsuiteid=iTC_ParentID)
-                        iTC_ParentID = iTC_Testsuite['parent_id']
-                        iTC_Name = iTC_Testsuite['name']
-                        iTC_full_path = iTC_Name + ' >> ' + iTC_full_path
-                        isParent = 1
-                    except Exception, err: isParent = 0
-            except Exception, err: print 'Testcase is not included in TestPlan'
-        return iTC_full_path
+                for iTC in self.CONN.getTestCaseIDByName(testcasename = str(iTestLink_name)):
+                    if iTC['tc_external_id'] == iTestLink_shortid:
+                        tmpPath = self.CONN.getFullPath(int(iTC['parent_id'])).values()
+                        return ' > '.join(tmpPath[0])
+            except Exception, err:
+                traceback.print_exc()
+        return tmpPath
 
     def updateTC_Result(self, TestCase_, switcher):
         #Do synchronize automation results to TestLink...
@@ -128,12 +118,10 @@ class TestLinkAPI(object):
                                                  execduration = (TestCase_.run_duration/(1000.0*60))%60)
                     except Exception, err:
                         if str(err).find('3030') == 0:
+                            TestCase_.run_status = 'SKIP'
                             print '\nNOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
                                   % (TestCase_.testlink_id, TestCase_.testlink_name)
-                            TestCase_.testlink_name = '%s (Not included in TestPlan)' % TestCase_.testlink_name
-                            TestCase_.run_status = 'SKIP'
                 else:
-                    TestCase_.testlink_name = 'Unidetified ID from TestLink'
                     TestCase_.run_status = 'SKIP'
                     print '\nNOTE: This testcase has no linked id to TestLink. Run result will be tosssed out.'
 

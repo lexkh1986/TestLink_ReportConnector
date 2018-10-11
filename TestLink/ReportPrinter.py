@@ -125,47 +125,35 @@ class ReportPrinter(TestReport):
                                         <td class="suite" colspan='5'>'''+suite.replace(".", " >> ")+'''</td>
                                         </tr>'''
                     html_string = html_string + suite_string
-                    string = suite 
-                    
-                table_string = ""
+                    string = suite
 
-                s = str(round((float(item[6])/(1000.00*60))%60, 2)) + ' m'
+                ID, shortID, name, steps, fullpath = 'None', 'None', item[2], None, None
+                status = item[1]
+                duration = str(round((float(item[6])/(1000.00*60))%60, 2)) + ' m'
+                if (item[3] not in (None, '')):
+                    ID = item[3]
+                    shortID = ID[len(self.PROJECT_PREFIX) + 1 - len(ID):]
+                    steps = self.apiRef.getTC_Steps(ID)
+                    address = self.apiRef.getTC_Testlink_Path(shortID, name)
+                if status.lower() == 'skip':
+                    if ID == 'None':
+                        name = 'Unidetified ID from TestLink'
+                    else:
+                        name = '%s (Not included in TestPlan)' % name
+                if steps not in ('<br/>', '', None):
+                    name = '''<details><summary>''' + name + '''</summary><p><b>Steps:</b></br>''' + steps + '''</p></details>'''
+                if address not in ('', None):
+                    name = '''<div title="''' + address + '''">''' + name + '''</div>'''
+                if status.lower() in ('pass','fail','skip'):
+                    status = '''<a class="status-''' + status.lower() + '''" value="p" target="_blank" rel="noopener" href="''' + stringbuild + item[5]+'''">''' + item[1] + '''</a>'''
                 
-                testlinkID = 'None' if (item[3]==None or item[3]=='') else item[3]
-                testlinkshortID = 'None' if (item[3]==None or item[3]=='') else testlinkID[len(self.PROJECT_PREFIX)+1-len(testlinkID):]
-                testname = 'None' if (item[2]==None or item[2]=='') else item[2]
-                testSteps = ''
-                table_string = '''<tr>
-                        <td>''' + testlinkID + '''</td>
-                        <td>''' + testname + '''</td>
-                        <td>''' + item[0] + '''</td>
-                        <td>''' + s + '''</td>'''
-                
-                if testlinkID != 'None':
-                    testSteps = self.apiRef.getTC_Steps(testlinkID)
-                    pathFull = self.apiRef.getTC_Testlink_Path(testlinkshortID,testname)
-                    if pathFull == '': pathFull = 'Not Found.'
-                    table_string = '''<tr>
-                        <td>''' + testlinkID + '''</td>
-                        <td title="Path: ''' + pathFull + '''"><details><summary>''' + testname + '''</summary><p><b>Steps:</b></br>''' + testSteps + '''</p></details></td>
-                        <td>''' + item[0] + '''</td>
-                        <td>''' + s + '''</td>'''
-                
-                if item[1] == 'PASS':
-                    table_string = table_string + '''
-                        <td><a class="status-pass" value="p" target="_blank" rel="noopener" href="''' + stringbuild +item[5]+'''">'''+item[1]+'''</a></td>
-                    </tr>
-                    '''
-                elif item[1] == 'FAIL':
-                    table_string = table_string + '''
-                        <td><a class="status-fail" value="f" target="_blank" rel="noopener" href="'''+ stringbuild +item[5]+'''">'''+item[1]+'''</a></td>
-                    </tr>
-                    '''
-                else:
-                    table_string = table_string + '''
-                        <td><a class="status-skip" value="f" target="_blank" rel="noopener" href="'''+ stringbuild +item[5]+'''">'''+item[1]+'''</a></td>
-                    </tr>
-                    '''
+                table_string = '''<tr>''' +\
+                        '''<td>''' + ID + '''</td>''' +\
+                        '''<td>''' + name + '''</td>''' +\
+                        '''<td>''' + item[0] + '''</td>''' +\
+                        '''<td>''' + duration + '''</td>''' +\
+                        '''<td>''' + status + '''</td>''' +\
+                        '''</tr>'''
                 html_string = html_string + table_string
                 
             reporthtml = reporthtml.replace('${ac_list_testcase_auto}', html_string)
@@ -180,13 +168,17 @@ class ReportPrinter(TestReport):
                 reporthtml = reporthtml.replace('${ac_have_manual_list}', '')
                 for tc in nymanual:
                     if tc[0] == 'status': continue
-                    testlinkshortID = tc[2][len(self.PROJECT_PREFIX)+1-len(tc[2]):]
-                    testSteps = self.apiRef.getTC_Steps(tc[2])
+                    ID = tc[2]
+                    shortID = ID[len(self.PROJECT_PREFIX)+1-len(ID):]
+                    name = tc[1]
+                    steps = self.apiRef.getTC_Steps(ID)
+                    address = self.apiRef.getTC_Testlink_Path(shortID, name)
+                    status = tc[0]
                     
-                    note_string = '''<tr><td>''' + tc[2] + '''</td>'''
-                    note_string = note_string + '''<td><details><summary>''' + tc[1] + '''</summary><p><b>Steps:</b></br>''' + testSteps + '''</p></details></td>'''
-                    if tc[0] == 'PASS': note_string = note_string + '''<td><p class="status-pass">PASS</p></td></tr>'''
-                    elif tc[0] == 'FAIL': note_string = note_string + '''<td><p class="status-fail">FAIL</p></td></tr>'''
+                    note_string = '''<tr><td>''' + ID + '''</td>'''
+                    note_string = note_string + '''<td><div title="''' + address + '''"><details><summary>''' + name + '''</summary><p><b>Steps:</b></br>''' + steps + '''</p></details></div></td>'''
+                    if status == 'PASS': note_string = note_string + '''<td><p class="status-pass">PASS</p></td></tr>'''
+                    elif status == 'FAIL': note_string = note_string + '''<td><p class="status-fail">FAIL</p></td></tr>'''
                     else: note_string = note_string + '''<td><p class="status-notrun">NOT RUN</p></td></tr>'''
                     html_string = html_string + note_string
         except IndexError:
