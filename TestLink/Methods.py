@@ -1,7 +1,7 @@
 from robot.libraries.BuiltIn import BuiltIn
 
 class Methods(object):
-    def log_step(self, step, expectation=None, logConsole=False, stepPrefix=False):
+    def log_step(self, step, expectation=None, logConsole=True, stepPrefix=False):
         '''
         Log a step to TestLink testcase\n
         Default expectation is blank (blank value will not be printed if useSummaryAsStep option is enabled\n

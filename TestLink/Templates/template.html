@@ -6,28 +6,28 @@ Integration Jenkins & Testlink: Export report
 <html>
 <style>
 /* Color */
-            a.status-pass, p.status-pass {
+            .status-pass {
                 color: green;
                 font-weight: bold;
                 text-decoration: none;
 				margin: 0;
             }
 
-            a.status-fail, p.status-fail {
+            .status-fail {
                 color: red;
                 font-weight: bold;
                 text-decoration: none;
 				margin: 0;
             }
 			
-            a.status-notrun, p.status-notrun {
+            .status-notrun {
                 color: black;
                 font-weight: bold;
                 text-decoration: none;
 				margin: 0;
             }
 
-            a.status-skip, p.status-skip {
+            .status-skip {
                 color: gray;
                 font-weight: bold;
                 text-decoration: none;
@@ -132,7 +132,7 @@ Integration Jenkins & Testlink: Export report
 			<table> 
                 <thead>
 					<tr id="title">
-                        <th style="background: ${ac_color}" colspan="5">${ac_status} (PASSED: ${ac_count_pass}, FAILED: ${ac_count_fail}, NOT RUN: ${ac_count_notrun})</th>
+                        <th style="background: ${ac_color}" colspan="5">${ac_status} (Passed: ${ac_count_pass}, Failed: ${ac_count_fail}, Not run: ${ac_count_notrun})</th>
                     </tr>
                                         
 					<tr>
@@ -151,16 +151,16 @@ Integration Jenkins & Testlink: Export report
                                         <p><span>Automation Results</span></p>
                                         <ul>
                                             <li><a href="${ac_link_build}robot/report/report.html">Detailed Report</a></li>
-                                            <li>Pass Percentage: ${ac_auto_percent}%</li>
-                                            <li>PASSED: ${ac_auto_pass}, FAILED: ${ac_auto_fail}, SKIPPED: ${ac_auto_skip}</li>
+                                            <li><strong>Pass Percentage</strong>: <b class="status-pass">${ac_auto_percent}%</b></li>
+                                            <li><b class="status-pass">Passed: ${ac_auto_pass}</b>, <b class="status-fail">Failed: ${ac_auto_fail}</b>, <b class="status-skip">Skipped: ${ac_auto_skip}</b></li>
                                         </ul>
                                     </div>
                                     <div class="column">
                                         <p><span>Manual Results</span></p>
                                         <ul>
                                             <li><a href="http://testlink.nexcel.vn/lib/results/resultsTC.php?format=0&tplan_id=${ac_plan}">Detailed Report</a></li>
-                                            <li>Pass Percentage: ${ac_manual_percent}%</li>
-                                            <li>PASSED: ${ac_manual_pass}, FAILED: ${ac_manual_fail}, NOT RUN: ${ac_manual_notrun}</li>
+                                            <li><strong>Pass Percentage</strong>: <b class="status-pass">${ac_manual_percent}%</b></li>
+                                            <li><b class="status-pass">Passed: ${ac_manual_pass}</b>, <b class="status-fail">Failed: ${ac_manual_fail}</b>, <b class="status-notrun">Not run: ${ac_manual_notrun}</b></li>
                                         </ul>
                                     </div>
                                 </div>
