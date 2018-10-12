@@ -99,7 +99,7 @@ class TestLinkAPI(object):
             try:
                 for iTC in self.CONN.getTestCaseIDByName(testcasename = str(iTestLink_name)):
                     if iTC['tc_external_id'] == iTestLink_shortid:
-                        tmpPath = self.CONN.getFullPath(int(iTC['parent_id'])).values()
+                        tmpPath = self.CONN.getFullPath(int(iTC['id'])).values()
                         return ' > '.join(tmpPath[0])
             except Exception, err:
                 traceback.print_exc()
