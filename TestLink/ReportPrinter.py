@@ -97,11 +97,11 @@ class ReportPrinter(TestReport):
             numpass = count_nonzero(nyreport[:,1]=='PASS')
             numfail = count_nonzero(nyreport[:,1]=='FAIL')
             numskip = count_nonzero(nyreport[:,1]=='SKIP')
-            if nymanual.shape[0] > 1:
+            try:
                 numpassmanual = count_nonzero(nymanual[:,0]=='PASS')
                 numfailmanual = count_nonzero(nymanual[:,0]=='FAIL')
                 numnotrunmanual = count_nonzero(nymanual[:,0]=='NOT RUN')
-            else:
+            except Exception, err:
                 numpassmanual = 0
                 numfailmanual = 0
                 numnotrunmanual = 0
@@ -164,6 +164,7 @@ class ReportPrinter(TestReport):
             
         html_string=''''''
         try:
+            numpassmanual = count_nonzero(nymanual[:,0]=='PASS')
             if nymanual.shape[0] > 1:
                 reporthtml = reporthtml.replace('${ac_have_manual_list}', '')
                 for tc in nymanual:
