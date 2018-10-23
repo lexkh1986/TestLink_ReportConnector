@@ -127,7 +127,7 @@ class ReportPrinter(TestReport):
                     html_string = html_string + suite_string
                     string = suite
 
-                ID, shortID, name, steps, fullpath = 'None', 'None', item[2], None, None
+                ID, shortID, name, steps, fullpath, address = 'None', 'None', item[2], None, None, None
                 status = item[1]
                 duration = str(round((float(item[6])/(1000.00*60))%60, 2)) + ' m'
                 if (item[3] not in (None, '')):
