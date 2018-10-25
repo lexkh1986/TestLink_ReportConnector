@@ -109,7 +109,7 @@ class ReportPrinter(TestReport):
                 
             per = '0' if numpassmanual == 0 else str(round(float(numpassmanual) / (numpassmanual + numfailmanual + numnotrunmanual) * 100))
             for r in (('${ac_count_pass}', str(numpass + numpassmanual)),('${ac_count_fail}', str(numfail + numfailmanual)), ('${ac_count_notrun}', str(numnotrunmanual)), ('${ac_runowner}', runowner), ('${ac_project}', project),
-                      ('${ac_plan}', plan), ('${ac_build}', build), ('${ac_link_build}', stringbuild), ('${ac_auto_percent}', str(round(float(numpass) / (numpass + numfail + numskip) * 100))), ('${ac_auto_pass}', str(numpass)), ('${ac_auto_fail}', str(numfail)), ('${ac_auto_skip}', str(numskip)),
+                      ('${ac_plan}', plan), ('${ac_plan_id}', self.TESTPLAN_ID), ('${ac_build}', build), ('${ac_link_build}', stringbuild), ('${ac_auto_percent}', str(round(float(numpass) / (numpass + numfail + numskip) * 100))), ('${ac_auto_pass}', str(numpass)), ('${ac_auto_fail}', str(numfail)), ('${ac_auto_skip}', str(numskip)),
                       ('${ac_manual_percent}', per), ('${ac_manual_pass}', str(numpassmanual)), ('${ac_manual_fail}', str(numfailmanual)), ('${ac_manual_notrun}', str(numnotrunmanual)),
                       ('${ac_status}', 'JOB SUCCESS') if numfail == 0 and numfailmanual == 0 else ('${ac_status}', 'JOB FAILURE'), ('${ac_color}', '#00A98F') if numfail == 0 and numfailmanual == 0 else ('${ac_color}', '#ff0000')):
                 reporthtml = reporthtml.replace(*r)
