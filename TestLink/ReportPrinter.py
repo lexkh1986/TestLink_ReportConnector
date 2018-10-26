@@ -175,9 +175,13 @@ class ReportPrinter(TestReport):
                     steps = self.apiRef.getTC_Steps(ID)
                     address = self.apiRef.getTC_Testlink_Path(shortID, name)
                     status = tc[0]
+                    if steps not in ('<br/>', '', None):
+                        name = '''<details><summary>''' + name + '''</summary><p><b>Steps:</b></br>''' + steps + '''</p></details>'''
+                    if address not in ('', None):
+                        name = '''<div title="''' + address + '''">''' + name + '''</div>'''
                     
                     note_string = '''<tr><td>''' + ID + '''</td>'''
-                    note_string = note_string + '''<td><div title="''' + address + '''"><details><summary>''' + name + '''</summary><p><b>Steps:</b></br>''' + steps + '''</p></details></div></td>'''
+                    note_string = note_string + '''<td>''' + name + '''</td>'''
                     if status == 'PASS': note_string = note_string + '''<td><p class="status-pass">PASS</p></td></tr>'''
                     elif status == 'FAIL': note_string = note_string + '''<td><p class="status-fail">FAIL</p></td></tr>'''
                     else: note_string = note_string + '''<td><p class="status-notrun">NOT RUN</p></td></tr>'''

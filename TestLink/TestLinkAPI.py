@@ -86,12 +86,15 @@ class TestLinkAPI(object):
         iTC_Auto = [elem._print()['testlink_id'] for elem in self._report().iContent]
         iTC_TestLink = self.CONN.getTestCasesForTestPlan(testplanid = self._report().TESTPLAN_ID,
                                                          buildid = self._report().TESTBUILD_ID,
-                                                         details = 'simple').values()
-        self._report().iManualContent = [{'testlink_id':elem[0]['full_external_id'],
-                                          'testlink_name':elem[0]['tcase_name'],
-                                          'status':self.STATUS.get(elem[0]['exec_status'])} \
-                                         for elem in iTC_TestLink \
-                                         if elem[0]['full_external_id'] not in iTC_Auto]
+                                                        details = 'simple').values()
+        for elem in iTC_TestLink:
+            iTC_Asignee = self.CONN.getTestCaseAssignedTester(testcaseexternalid = elem[0]['full_external_id'],
+                                                                  testplanid = self._report().TESTPLAN_ID,
+                                                                  buildid = self._report().TESTBUILD_ID)
+            if elem[0]['full_external_id'] not in iTC_Auto and iTC_Asignee[0]['login'] not in ('', None):
+                self._report().iManualContent.append({'testlink_id':elem[0]['full_external_id'],
+                                                  'testlink_name':elem[0]['tcase_name'],
+                                                  'status':self.STATUS.get(elem[0]['exec_status'])})
 
     def getTC_Testlink_Path(self, iTestLink_shortid, iTestLink_name):
         tmpPath = None
