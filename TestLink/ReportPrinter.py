@@ -138,6 +138,10 @@ class ReportPrinter(TestReport):
                 if status.lower() == 'skip':
                     if ID == 'None':
                         name = 'Unidetified ID from TestLink'
+                    elif ID not in 'None':
+                        iTC_Asignee = self.apiRef.getTC_Assigned(ID, self.TESTPLAN_ID, self.TESTBUILD_ID)
+                        if iTC_Asignee[0]['login'] in ('', None):
+                            name = '%s (Not assigned to anyone)' % name
                     else:
                         name = '%s (Not included in TestPlan)' % name
                 if steps not in ('<br/>', '', None):
