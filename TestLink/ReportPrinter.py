@@ -140,10 +140,10 @@ class ReportPrinter(TestReport):
                         name = 'Unidetified ID from TestLink'
                     elif ID not in 'None':
                         iTC_Asignee = self.apiRef.getTC_Assigned(ID, self.TESTPLAN_ID, self.TESTBUILD_ID)
-                        if iTC_Asignee[0]['login'] in ('', None):
+                        if iTC_Asignee is None:
+                            name = '%s (Not included in TestPlan)' % name
+                        elif iTC_Asignee[0]['login'] in ('', None):
                             name = '%s (Not assigned to anyone)' % name
-                    else:
-                        name = '%s (Not included in TestPlan)' % name
                 if steps not in ('<br/>', '', None):
                     name = '''<details><summary>''' + name + '''</summary><p><b>Steps:</b></br>''' + steps + '''</p></details>'''
                 if address not in ('', None):

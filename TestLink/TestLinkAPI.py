@@ -83,10 +83,13 @@ class TestLinkAPI(object):
                                 testlink_name = iTestLink_details[0]['name'])
 
     def getTC_Assigned(self, iTestLink_ID, iTestLink_PlanID, iTestLink_BuildID):
-        iTC_Asignee = self.CONN.getTestCaseAssignedTester(testcaseexternalid = str(iTestLink_ID),
+        try:
+            iTC_Asignee = self.CONN.getTestCaseAssignedTester(testcaseexternalid = str(iTestLink_ID),
                                                                   testplanid = str(iTestLink_PlanID),
                                                                   buildid = str(iTestLink_BuildID))
-        return iTC_Asignee
+            return iTC_Asignee
+        except Exception, err:
+            return None
         
     def getRP_TestLink_Manual(self):
         iTC_Auto = [elem._print()['testlink_id'] for elem in self._report().iContent]
@@ -118,25 +121,21 @@ class TestLinkAPI(object):
             if switcher:
                 if TestCase_.testlink_id is not None:
                     iTC_Asignee = self.getTC_Assigned(TestCase_.testlink_id, self._report().TESTPLAN_ID, self._report().TESTBUILD_ID)
-                    
-                    if iTC_Asignee[0]['login'] in ('', None):
+                    if iTC_Asignee is None:
+                        TestCase_.run_status = 'SKIP'
+                        print '\nNOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
+                                      % (TestCase_.testlink_id, TestCase_.testlink_name)
+                    elif iTC_Asignee[0]['login'] in ('', None):
                         TestCase_.run_status = 'SKIP'
                         print '\nNOTE: This testcase not assigned to anyone: %s (%s). Run result will be tosssed out.'\
                                   % (TestCase_.testlink_id, TestCase_.testlink_name)
                     else:
-                        try:
-                            
-                            self.CONN.reportTCResult(testcaseexternalid = TestCase_.testlink_id,
+                        self.CONN.reportTCResult(testcaseexternalid = TestCase_.testlink_id,
                                                      status = dict_getkey(self.STATUS, TestCase_.run_status),
                                                      testplanid = self._report().TESTPLAN_ID,
                                                      buildname = self._report().TESTBUILD_NAME,
                                                      notes = TestCase_.run_msg,
                                                      execduration = (TestCase_.run_duration/(1000.0*60))%60)
-                        except Exception, err:
-                            if str(err).find('3030') == 0:
-                                TestCase_.run_status = 'SKIP'
-                                print '\nNOTE: This testcase not linked to testplan: %s (%s). Run result will be tosssed out.'\
-                                      % (TestCase_.testlink_id, TestCase_.testlink_name)
                 else:
                     TestCase_.run_status = 'SKIP'
                     print '\nNOTE: This testcase has no linked id to TestLink. Run result will be tosssed out.'
