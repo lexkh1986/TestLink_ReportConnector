@@ -1,6 +1,5 @@
 *** Settings ***
-Metadata          TC1    NAP-Special Del-4395
-Metadata          TC2    NAP-Special Del-4396
+Metadata          TC1    NAP-Special Del-4398
 Metadata          TC3    NAP-Special Del-4397
 Resource          ../Actions/common.txt
 Library           ../TestLink/Methods.py
@@ -14,12 +13,16 @@ TC1
     # Do something
     Log Step    Show tickets    Check detail in betlist
     # Do something
+    Fail    test
 
 TC2
     [Documentation]    Veryfy ...
     Log Step    Login    Done
     Log Step    Search match temp    Done
     ac log    Test J
+    Register Testlink Id    NAP-Special Del-4396
 
 TC3
+    [Documentation]    Test
     Log    ${TEST_NAME}
+    Log Step    B    B

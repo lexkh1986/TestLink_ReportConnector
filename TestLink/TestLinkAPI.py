@@ -17,7 +17,7 @@ class TestLinkAPI(object):
 
         #TestLink connection attributes
         data = getVarFromFile(self.EXEC_PATH)
-        self.SERVER_URL = 'http://testlink.nexcel.vn/lib/api/xmlrpc/v1/xmlrpc.php'
+        self.SERVER_URL = 'http://testlink.nexdev.net/lib/api/xmlrpc/v1/xmlrpc.php'
         self.DEVKEY = data.DEVKEY
         self._report().PROJECT_NAME = data.PROJECT
         self._report().TESTPLAN_NAME = data.TESTPLAN
