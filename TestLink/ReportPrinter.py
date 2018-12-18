@@ -194,7 +194,7 @@ class ReportPrinter(TestReport):
             reporthtml = reporthtml.replace('${ac_have_manual_list}', 'None')
             print 'Dont have manual testcase'
         reporthtml = reporthtml.replace('${ac_list_testcase_manual}', html_string)
-        reporthtml = re.sub('\xa0', '', reporthtml)
+        reporthtml = re.sub('\xa0', '', reporthtml).encode('utf8','ignore')
         f = open(filepath,'w')
         f.write(reporthtml)
         f.close()
