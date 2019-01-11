@@ -1,4 +1,4 @@
-isJenkinRun=False
+isJenkinRun=True
 useSummaryAsStep=True
 useCSVTestLinkMapper=True
 syncTestCaseSteps=True

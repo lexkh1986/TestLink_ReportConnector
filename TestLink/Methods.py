@@ -31,5 +31,8 @@ class Methods(object):
             if testlink_id:
                 iTC = BuiltIn().get_variable_value('${TESTLINK_iTC}')
                 iTC.testlink_id = testlink_id[0].strip()
+
+                tcName = BuiltIn().get_variable_value('${TEST_NAME}')
+                BuiltIn().set_suite_metadata(tcName, testlink_id[0].strip())
         except Exception, err:
             pass

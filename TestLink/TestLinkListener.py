@@ -25,7 +25,7 @@ class TestLinkListener(object):
                 iSuiteMeta = BuiltIn().get_variable_value('${SUITE METADATA}')
                 for iTC in [(elem.get('Test'), elem.get('TestLink_ID')) for elem in iCSVMeta]:
                     if iTC[0] not in iSuiteMeta.keys():
-                        BuiltIn().set_suite_metadata(iTC[0], iTC[1], True)
+                        BuiltIn().set_suite_metadata(iTC[0], iTC[1], True)    
 
     def start_test(self, name, attrs):
         self._iTC = self._buildTC(name, attrs) #Build testcase object
@@ -38,10 +38,16 @@ class TestLinkListener(object):
         self.TESTLINK_API.updateTC_Step(self._iTC, self.TESTLINK_REPORT.SYNC_STEPS) #Log auto steps to TestCase sumarry
         self.TESTLINK_API.updateTC_Result(self._iTC, self.TESTLINK_REPORT.SYNC_RESULTS) #Update auto result to TestLink
 
+    def end_suite(self, name, attrs):
+        self._updateTLMapper(attrs['tests'], attrs['source'])
+
     def output_file(self, path):
-        if self.TESTLINK_REPORT.isRebot == False:
-            self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
-        self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
+        try:
+            if self.TESTLINK_REPORT.isRebot == False:
+                self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
+            self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
+        except Exception, err:
+            traceback.print_exc()
 
     @staticmethod
     def _buildTC(name, attrs):
@@ -75,9 +81,32 @@ class TestLinkListener(object):
                 except Exception, err:
                     iCurDict, iCurName = [], []
                     print 'Found corrupted format CSV mapper at address:\n%s\nRegenerating new file...' % iMapperPath
+            return iMapperExists, iCurDict
+        return False, []
+
+    @staticmethod
+    def _updateTLMapper(tcList, source):
+        if tcList:
+            iMapperPath = '%s.csv' % source[:-4]
+            iMapperExists = os.path.isfile(iMapperPath)
+            iCurDict, iCurName = [], []
+            if iMapperExists:
+                try:
+                    iCurDict = fromCSV(iMapperPath)
+                    iCurName = [elem.get('Test') for elem in iCurDict]
+                    if 'TestLink_ID' not in iCurDict[0].keys():
+                        raise Exception('Invalid columns')
+                except Exception, err:
+                    iCurDict, iCurName = [], []
+                    print 'Found corrupted format CSV mapper at address:\n%s\nRegenerating new file...' % iMapperPath
+            iSuiteMeta = BuiltIn().get_variable_value('${SUITE METADATA}')
             for iNew in tcList:
                 if iNew not in iCurName:
                     iCurDict.append({'Test':iNew, 'TestLink_ID':''})
+                else:
+                    for i, v in enumerate(iCurDict):
+                        if v.get('Test') == iNew and iSuiteMeta.get(iNew) is not None:
+                            v['TestLink_ID'] = iSuiteMeta.get(iNew)
             toCSV(iMapperPath, iCurDict[0].keys(), [i.values() for i in iCurDict])
             return iMapperExists, iCurDict
         return False, []
