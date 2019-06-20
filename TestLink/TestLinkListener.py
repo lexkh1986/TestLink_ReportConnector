@@ -3,51 +3,68 @@ from TestReport import TestReport, TestCase
 from TestLinkAPI import TestLinkAPI
 from ReportPrinter import ReportPrinter
 from Misc import *
+import psutil
 import sys, os, csv, traceback
 
 class TestLinkListener(object):
     ROBOT_LISTENER_API_VERSION = 2
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     _iTC = None
+    _switched = 'OFF'
 
-    def __init__(self):
-        self.TESTLINK_REPORT = ReportPrinter()
-        self.TESTLINK_API = TestLinkAPI(self.TESTLINK_REPORT)
-        self.TESTLINK_REPORT.apiRef = self.TESTLINK_API
-        if set(sys.argv) & set(['-R','--rerunfailed']):
-            self.TESTLINK_REPORT.isRebot = True
+    def __init__(self, testLink='ON'):
+        self._switched = testLink
+        if self._switched == 'ON':
+            self.TESTLINK_REPORT = ReportPrinter()
+            self.TESTLINK_API = TestLinkAPI(self.TESTLINK_REPORT)
+            self.TESTLINK_REPORT.apiRef = self.TESTLINK_API
+            if set(sys.argv) & set(['-R','--rerunfailed']):
+                self.TESTLINK_REPORT.isRebot = True
 
     def start_suite(self, name, attrs):
-        self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
-        if self.TESTLINK_REPORT.USE_CSV_MAPPER:
-            isMeta, iCSVMeta = self._syncTLMapper(attrs['tests'], attrs['source'])
-            if isMeta:
-                iSuiteMeta = BuiltIn().get_variable_value('${SUITE METADATA}')
-                for iTC in [(elem.get('Test'), elem.get('TestLink_ID')) for elem in iCSVMeta]:
-                    if iTC[0] not in iSuiteMeta.keys():
-                        BuiltIn().set_suite_metadata(iTC[0], iTC[1], True)    
+        if self._switched == 'ON':
+            self.ROBOT_OUTPUT_DIR = BuiltIn().get_variable_value('${OUTPUT DIR}')
+            if self.TESTLINK_REPORT.USE_CSV_MAPPER:
+                isMeta, iCSVMeta = self._syncTLMapper(attrs['tests'], attrs['source'])
+                if isMeta:
+                    iSuiteMeta = BuiltIn().get_variable_value('${SUITE METADATA}')
+                    for iTC in [(elem.get('Test'), elem.get('TestLink_ID')) for elem in iCSVMeta]:
+                        if iTC[0] not in iSuiteMeta.keys():
+                            BuiltIn().set_suite_metadata(iTC[0], iTC[1], True)    
 
     def start_test(self, name, attrs):
-        self._iTC = self._buildTC(name, attrs) #Build testcase object
-        BuiltIn().set_test_variable('${TESTLINK_iTC}', self._iTC)
+        if self._switched == 'ON':
+            self._iTC = self._buildTC(name, attrs) #Build testcase object
+            BuiltIn().set_test_variable('${TESTLINK_iTC}', self._iTC)
 
     def end_test(self, name, attrs):
-        self._buildTCResult(self._iTC, attrs) #Build result object
-        self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
-        self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
-        self.TESTLINK_API.updateTC_Step(self._iTC, self.TESTLINK_REPORT.SYNC_STEPS) #Log auto steps to TestCase sumarry
-        self.TESTLINK_API.updateTC_Result(self._iTC, self.TESTLINK_REPORT.SYNC_RESULTS) #Update auto result to TestLink
+        if self._switched == 'ON':
+            self._buildTCResult(self._iTC, attrs) #Build result object
+            self.TESTLINK_API.getTC_TestLink_Details(self._iTC) #Get testlink id
+            self.TESTLINK_REPORT.append_tc(self._iTC) #Add testcase with result to testreport list
+            self.TESTLINK_API.updateTC_Step(self._iTC, self.TESTLINK_REPORT.SYNC_STEPS) #Log auto steps to TestCase sumarry
+            self.TESTLINK_API.updateTC_Result(self._iTC, self.TESTLINK_REPORT.SYNC_RESULTS) #Update auto result to TestLink
 
     def end_suite(self, name, attrs):
-        self._updateTLMapper(attrs['tests'], attrs['source'])
+        if self._switched == 'ON':
+            self._updateTLMapper(attrs['tests'], attrs['source'])
 
     def output_file(self, path):
-        try:
-            if self.TESTLINK_REPORT.isRebot == False:
-                self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
-            self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
-        except Exception, err:
-            traceback.print_exc()
+        if self._switched == 'OFF':
+            self._cleanup_env()
+        if self._switched == 'ON':
+            try:
+                if self.TESTLINK_REPORT.isRebot == False:
+                    self.TESTLINK_API.getRP_TestLink_Manual() #Build list of manual testcases
+                self.TESTLINK_REPORT.parseReport(self.ROBOT_OUTPUT_DIR) # Build html report
+            except Exception, err:
+                traceback.print_exc()
+
+    @staticmethod
+    def _cleanup_env():
+        for proc in psutil.process_iter():
+            if proc.name() == 'firefox.exe':
+                proc.kill()
 
     @staticmethod
     def _buildTC(name, attrs):
