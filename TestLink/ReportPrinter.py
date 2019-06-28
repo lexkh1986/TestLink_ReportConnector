@@ -32,12 +32,12 @@ class ReportPrinter(TestReport):
 
         else:
             print 'This run is a rerun process. Merging result...'
-            array_auto_1 = genfromtxt('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), delimiter=',',dtype=str)
+            array_auto_1 = genfromtxt('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), delimiter='||',dtype=str)
             array_auto_2 = self._export()
             
             for item in array_auto_2: array_auto_1[where((array_auto_1[:,0]==item[0]) & (array_auto_1[:,3]==item[3])), 1] = item[1]
 
-            array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter=',',dtype=str)
+            array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter='||',dtype=str)
             
             print 'Re-printing html report...'
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
@@ -206,5 +206,5 @@ def _read_txt_to_string(path):
   
 def toCSV(filepath, source):
     with open(filepath, 'wb') as of:
-        writer = csv.writer(of)
+        writer = csv.writer(of, delimiter ='||')
         writer.writerows(source)
