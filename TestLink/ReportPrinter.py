@@ -6,6 +6,7 @@ class ReportPrinter(TestReport):
     REPORT_HTML_PATH = 'testlink_report.html'
     REPORT_AUTO_CSV_PATH = 'run_report.csv'
     REPORT_MANUAL_CSV_PATH = 'manual_report.csv'
+    REPORT_CSV_DELIMETER = '|'
     REPORT_TEMPLATE_PATH = '%s/%s' % (os.path.dirname(__file__), 'Templates/template.html')
     
     def __init__(self):
@@ -16,11 +17,11 @@ class ReportPrinter(TestReport):
             if self.hasFailTest:
                 #Export list of automated tests in csv for 2nd run case
                 print 'Printing automated testcases list...'
-                toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist())
+                toCSV('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), self._export().tolist(), self.REPORT_CSV_DELIMETER)
 
             #Export list of manual tests
             print 'Printing manual testcases list...'
-            toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist())
+            toCSV('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), self._export_manual_report().tolist(), self.REPORT_CSV_DELIMETER)
 
             #Print html report
             print 'Printing html report...'
@@ -32,12 +33,12 @@ class ReportPrinter(TestReport):
 
         else:
             print 'This run is a rerun process. Merging result...'
-            array_auto_1 = genfromtxt('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), delimiter=',',dtype=str)
+            array_auto_1 = genfromtxt('%s\%s' % (output_path, self.REPORT_AUTO_CSV_PATH), delimiter=self.REPORT_CSV_DELIMETER, dtype=str)
             array_auto_2 = self._export()
             
             for item in array_auto_2: array_auto_1[where((array_auto_1[:,0]==item[0]) & (array_auto_1[:,3]==item[3])), 1] = item[1]
 
-            array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter=',',dtype=str)
+            array_manual = genfromtxt('%s\%s' % (output_path, self.REPORT_MANUAL_CSV_PATH), delimiter=self.REPORT_CSV_DELIMETER, dtype=str)
             
             print 'Re-printing html report...'
             self._export_html('%s\%s' % (output_path, self.REPORT_HTML_PATH),
@@ -204,7 +205,7 @@ def _read_txt_to_string(path):
     file = open(filename, 'r')
     return file.read()
   
-def toCSV(filepath, source):
+def toCSV(filepath, source, delimeter):
     with open(filepath, 'wb') as of:
-        writer = csv.writer(of)
+        writer = csv.writer(of, delimiter=delimeter)
         writer.writerows(source)
