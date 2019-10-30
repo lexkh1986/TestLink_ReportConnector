@@ -86,7 +86,7 @@ class TestLinkListener(object):
     @staticmethod
     def _syncTLMapper(tcList, source):
         if tcList:
-            iMapperPath = '%s.csv' % source[:-4]
+            iMapperPath = '%s.csv' % validate_suitename(source)
             iMapperExists = os.path.isfile(iMapperPath)
             iCurDict, iCurName = [], []
             if iMapperExists:
@@ -104,7 +104,7 @@ class TestLinkListener(object):
     @staticmethod
     def _updateTLMapper(tcList, source):
         if tcList:
-            iMapperPath = '%s.csv' % source[:-4]
+            iMapperPath = '%s.csv' % validate_suitename(source)
             iMapperExists = os.path.isfile(iMapperPath)
             iCurDict, iCurName = [], []
             if iMapperExists:
@@ -139,3 +139,6 @@ def fromCSV(filepath):
         reader = csv.reader(f, skipinitialspace=True)
         header = next(reader)
         return [dict(zip(header, map(str, row))) for row in reader]
+
+def validate_suitename(source):
+    return source.replace('.txt', '').replace('.robot', '').replace('.tsv', '').replace('.html', '')
